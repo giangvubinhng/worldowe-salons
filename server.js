@@ -11,7 +11,8 @@ app.use(express.json()); // New
 app.get('/', (req, res) => {
 	res.send('Hello World!');
 });
-app.post('/signup', user.signup);
+app.post('/api/user/signup', user.signup);
+app.get('/api/user/verify/:token', user.verifyUser);
 app.listen(port, () => {
 	console.log(`Example app listening at ${port}`);
 });
