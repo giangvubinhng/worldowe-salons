@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
 const db = require('../Models/database');
 const jwt = require('jsonwebtoken');
 const emailingService = require('../services/emailing.service.js');
