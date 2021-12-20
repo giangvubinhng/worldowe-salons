@@ -21,5 +21,5 @@ module.exports.sendConfirmationEmail = (name, email, confirmationCode) => {
           <a href=http://localhost:3000/confirm/${confirmationCode}> Click here</a>
           </div>`,
 		})
-		.catch((err) => console.log(err));
+		.catch((err) => console.log("An internal error has occured while trying to send email. Please try again later\n" + err));
 };

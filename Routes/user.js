@@ -1,8 +1,9 @@
-import bcrypt from 'bcrypt';
+const bcrypt = require('bcrypt');
 const db = require('../Models/database');
 const jwt = require('jsonwebtoken');
 const emailingService = require('../services/emailing.service.js');
 require('dotenv').config();
+
 /**
  * User sign Up
  */
@@ -123,6 +124,7 @@ exports.signup = async function (req, res) {
 		);
 	}
 };
+
 /**
  * Verify user after registration using email service
  */
@@ -162,3 +164,11 @@ exports.verifyUser = async (req, res) => {
 		}
 	);
 };
+
+/**
+ * Sign in logic
+ */
+exports.signin = async (req,res) => {
+}
+
+

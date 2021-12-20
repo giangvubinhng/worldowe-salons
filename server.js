@@ -9,7 +9,7 @@ require('dotenv').config();
 app.use(express.urlencoded({ extended: true })); // New
 app.use(express.json()); // New
 app.get('/', (req, res) => {
-	res.send('Hello World!');
+	res.send('Sorry, Worldowe is currently under development!');
 });
 app.post('/api/user/signup', user.signup);
 app.get('/api/user/verify/:token', user.verifyUser);
