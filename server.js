@@ -1,18 +1,21 @@
 const express = require('express');
 const app = express();
+const passport = require('passport');
 const user = require('./Routes/user.js');
 const port = process.env.PORT || 5000;
 // const db = require('./Models/database.js');
 
 require('dotenv').config();
-
 app.use(express.urlencoded({ extended: true })); // New
 app.use(express.json()); // New
+app.use(passport.initialize());
+app.use(passport.session());
 app.get('/', (req, res) => {
 	res.send('Sorry, Worldowe is currently under development!');
 });
-app.post('/api/user/signup', user.signup);
+app.post('/api/signup', user.signup);
 app.get('/api/user/verify/:token', user.verifyUser);
+app.post('/api/login', user.signin);
 app.listen(port, () => {
 	console.log(`Example app listening at ${port}`);
 });
