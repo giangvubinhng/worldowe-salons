@@ -1,11 +1,10 @@
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const LocalStrategy = require('passport-local');
 const db = require('../Models/database');
 const emailingService = require('../services/emailing.service.js');
 require('dotenv').config();
-
+require('../config/passport')(passport);
 /**
  * User sign Up
  */
@@ -170,31 +169,19 @@ exports.verifyUser = async (req, res) => {
 /**
  * Sign in logic
  */
-exports.signin = async (req,res) => {
-		passport.use(new LocalStrategy({
-						usernameField: 'email',
-						passwordField: 'password',
-						session: false
-				},
-				function verify(username, password, done)
-				{
-						db.query('SELECT * FROM users WHERE email = ?', [username], async (err, user) => {
-								if(err) { return done(err);}
-								if(!user) {
-										return done(null, false, {message: 'Incorrect username or password.'});
-								}
-								const correctPass = await bcrypt.compare(password, user[0].password);
-								if(!correctPass)
-								{
-										return res.status(400).json({
-												message: "Incorrect username or password."
-										})
-								}
-								return res.status(200).json({
-										message: "Login successfully"
-								})
-						});
-				}));
+exports.signin = (req,res,next) => {
+	passport.authenticate("local", (err, user, info) => {
+    if (err) throw err;
+    if (!user) res.send("No User Exists");
+    else {
+      req.logIn(user, (err) => {
+        if (err) throw err;
+        res.send("Successfully Authenticated");
+				console.log("user is: \n");
+        console.log(req.user);
+      });
+    }
+  })(req, res, next);	
 }
 
 
