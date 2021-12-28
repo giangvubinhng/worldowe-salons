@@ -170,18 +170,17 @@ exports.verifyUser = async (req, res) => {
  * Sign in logic
  */
 exports.signin = (req,res,next) => {
-	passport.authenticate("local", (err, user, info) => {
+	passport.authenticate("local", (err, user) => {
     if (err) throw err;
     if (!user) res.send("No User Exists");
     else {
-      req.logIn(user, (err) => {
+      req.logIn(user, {session: false},(err) => {
         if (err) throw err;
-        res.send("Successfully Authenticated");
-				console.log("user is: \n");
-        console.log(req.user);
+				const userObject = {id: user[0].id, email: user[0].email}
+				const token = jwt.sign(userObject, process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin");
+        return res.status(200).json({token, message: "Authenticated successfully"});
       });
     }
   })(req, res, next);	
 }
-
 

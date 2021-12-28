@@ -26,23 +26,24 @@ module.exports = function (passport) {
 												message: "Incorrect username or password."
 										})
 								}
+								if(user[0].activated == 0) return done(null, false, {message: "Please verify your email"})
 								return done(null, user, {
 										message: "Login successfully"
 								})
 						});
 				}));
 
-		passport.serializeUser((user, cb) => {
-				cb(null, user[0].id);
-		});
-		passport.deserializeUser((id, cb) => {
-				db.query(findById, [id], (err, user) => {
-						const userInfo = {
-								email: user.email
-						}
-						console.log(id)
-						cb(err, userInfo);
-				})
-		})
+		//passport.serializeUser((user, cb) => {
+				//cb(null, user[0].id);
+		//});
+		//passport.deserializeUser((id, cb) => {
+				//db.query(findById, [id], (err, user) => {
+						//const userInfo = {
+								//email: user.email
+						//}
+						//console.log(id)
+						//cb(err, userInfo);
+				//})
+		//})
 }
 

@@ -3,6 +3,7 @@ const app = express();
 const passport = require('passport');
 const session = require('express-session');
 const user = require('./Routes/user.js');
+const salons = require('./Routes/salons');
 const port = process.env.PORT || 5000;
 // const db = require('./Models/database.js');
 
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 app.post('/api/signup', user.signup);
 app.get('/api/user/verify/:token', user.verifyUser);
 app.post('/api/login', user.signin);
+app.get('/api/getSalons', salons.getAllSalons);
 app.listen(port, () => {
 	console.log(`Example app listening at ${port}`);
 });
