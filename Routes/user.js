@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const express = require('express')
+const router = express.Router();
 const jwt = require('jsonwebtoken');
 const db = require('../Models/database');
 const emailingService = require('../services/emailing.service.js');
@@ -8,7 +10,7 @@ require('../config/passport')(passport);
 /**
  * User sign Up
  */
-exports.signup = async function (req, res) {
+router.post('/api/signup', async function (req, res) {
 	if (req.method == 'POST') {
 		// Hash password
 		const encryptedPassword = await bcrypt.hash(
@@ -17,15 +19,8 @@ exports.signup = async function (req, res) {
 		);
 		//data from front end
 		const email = req.body.email;
-		const shop_name = req.body.shop_name;
-		const phone = req.body.phone;
-		const shop_street = req.body.shop_street;
-		const shop_city = req.body.shop_city;
-		const shop_state = req.body.shop_state;
-		const shop_country = req.body.shop_state;
-		const shop_zip = req.body.shop_zip;
-		const technicians = req.body.technicians;
-		const services = req.body.services;
+		const first_name = req.body.first_name;
+		const last_name = req.body.last_name;
 
 		db.query(
 			'SELECT * FROM users WHERE email = ? limit 1',
@@ -38,60 +33,13 @@ exports.signup = async function (req, res) {
 				} else if (user.length === 0) {
 					if (email !== '' && req.body.password !== '') {
 						db.query(
-							'INSERT INTO users (email, password, shop_name, phone, activated) VALUES (?, ?, ?, ?, ?)',
-							[email, encryptedPassword, shop_name, phone, false],
+							'INSERT INTO users (email, first_name, last_name ,password, activated) VALUES (?, ?, ?, ?, ?)',
+							[email, first_name, last_name, encryptedPassword, false],
 							(err, result) => {
 								if (err) {
 									console.log(err);
 								} else {
 									const user_id = result.insertId;
-									// Store location
-									db.query(
-										'INSERT INTO location (user_id, street, city, state, country, zip) VALUES (?, ?, ?, ?, ?, ?)',
-										[
-											user_id,
-											shop_street,
-											shop_city,
-											shop_state,
-											shop_country,
-											shop_zip,
-										],
-										(err, rows) => {
-											if (err) {
-												console.log(err);
-											} else {
-												console.log('added to location successfully');
-											}
-										}
-									);
-									// Technician of store
-									technicians.forEach((tech) => {
-										db.query(
-											'INSERT INTO technicians (technician_name, user_id) VALUES (?, ?)',
-											[tech.name, user_id],
-											(err, rows) => {
-												if (err) {
-													console.log(err);
-												} else {
-													console.log('added to technician successfully');
-												}
-											}
-										);
-									});
-									// Services for store
-									services.forEach((service) => {
-										db.query(
-											'INSERT INTO services (user_id, service_name) VALUES (?, ?)',
-											[user_id, service.name],
-											(err, rows) => {
-												if (err) {
-													console.log(err);
-												} else {
-													console.log('added to technician successfully');
-												}
-											}
-										);
-									});
 									const token = jwt.sign(
 										{ email: req.body.email, id: user_id },
 										process.env.VERIFICATION_TOKEN
@@ -109,7 +57,7 @@ exports.signup = async function (req, res) {
 										.status(200)
 										.send('Signed up successfully. Please check your email');
 									emailingService.sendConfirmationEmail(
-										shop_name,
+										first_name,
 										email,
 										token
 									);
@@ -124,12 +72,13 @@ exports.signup = async function (req, res) {
 			}
 		);
 	}
-};
+})
+
 
 /**
  * Verify user after registration using email service
  */
-exports.verifyUser = async (req, res) => {
+router.get('/api/user/verify/:token', async (req, res) => {
 	db.query(
 		'SELECT user_id FROM verification_token WHERE token = ? limit 1',
 		[req.params.token],
@@ -164,23 +113,29 @@ exports.verifyUser = async (req, res) => {
 			}
 		}
 	);
-};
+})
 
 /**
  * Sign in logic
  */
-exports.signin = (req,res,next) => {
-	passport.authenticate("local", (err, user) => {
-    if (err) throw err;
-    if (!user) res.send("No User Exists");
-    else {
-      req.logIn(user, {session: false},(err) => {
-        if (err) throw err;
-				const userObject = {id: user[0].id, email: user[0].email}
-				const token = jwt.sign(userObject, process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin");
-        return res.status(200).json({token, message: "Authenticated successfully"});
-      });
-    }
-  })(req, res, next);	
-}
-
+router.post('/api/login', (req, res, next) => {
+	passport.authenticate('local', (err, user) => {
+		if (err) throw err;
+		if (!user) res.send('No User Exists');
+		else {
+			req.logIn(user, { session: false }, (err) => {
+				if (err) throw err;
+				const userObject = { id: user[0].id, email: user[0].email };
+				const token = jwt.sign(
+					userObject,
+					process.env.LOGIN_SECRET_TOKEN || 'someSecretToLogin'
+				);
+					return res.cookie("access_token", token, {
+							httpOnly: true,
+							secure: process.env.NODE_ENV === "production",
+					}).status(200).json({message: "Logged in successfully"})
+			});
+		}
+	})(req, res, next);
+});
+module.exports = router

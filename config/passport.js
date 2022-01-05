@@ -1,49 +1,78 @@
-const bcrypt = require("bcrypt");
-const LocalStrategy = require("passport-local").Strategy
+const bcrypt = require('bcrypt');
+const LocalStrategy = require('passport-local').Strategy;
+const JWTstrategy = require('passport-jwt').Strategy;
 const db = require('../Models/database');
-
-
+require('dotenv').config();
+const cookieExtractor = function (req) {
+	var token = null;
+	if (req && req.cookies){
+			token = req.cookies.access_token;
+			console.log(token);
+	}
+	return token;
+};
 
 module.exports = function (passport) {
-		const findByEmail = 'SELECT * FROM users WHERE email = ?'
-		const findById = 'SELECT * FROM users WHERE id = ?'
-		passport.use(new LocalStrategy({
-						usernameField: 'email',
-						passwordField: 'password',
-						session: false
-				},
-				(username, password, done) =>
-				{
-						db.query(findByEmail, [username], async (err, user) => {
-								if(err) { return done(err);}
-								if(!user) {
-										return done(null, false, {message: 'Incorrect username or password.'});
-								}
-								const correctPass = await bcrypt.compare(password, user[0].password);
-								if(!correctPass)
-								{
-										return done(null, false,{
-												message: "Incorrect username or password."
-										})
-								}
-								if(user[0].activated == 0) return done(null, false, {message: "Please verify your email"})
-								return done(null, user, {
-										message: "Login successfully"
-								})
+	const findByEmail = 'SELECT * FROM users WHERE email = ?';
+	passport.use(
+		new LocalStrategy(
+			{
+				usernameField: 'email',
+				passwordField: 'password',
+				session: false,
+			},
+			(username, password, done) => {
+				db.query(findByEmail, [username], async (err, user) => {
+					if (err) {
+						return done(err);
+					}
+					if (!user) {
+						return done(null, false, {
+							message: 'Incorrect username or password.',
 						});
-				}));
-
-		//passport.serializeUser((user, cb) => {
-				//cb(null, user[0].id);
-		//});
-		//passport.deserializeUser((id, cb) => {
-				//db.query(findById, [id], (err, user) => {
-						//const userInfo = {
-								//email: user.email
-						//}
-						//console.log(id)
-						//cb(err, userInfo);
-				//})
-		//})
-}
-
+					}
+					const correctPass = await bcrypt.compare(password, user[0].password);
+					if (!correctPass) {
+						return done(null, false, {
+							message: 'Incorrect username or password.',
+						});
+					}
+					if (user[0].activated == 0)
+						return done(null, false, { message: 'Please verify your email' });
+					return done(null, user, {
+						message: 'Login successfully',
+					});
+				});
+			}
+		)
+	);
+	var opts = {};
+	opts.jwtFromRequest = cookieExtractor; // check token in cookie
+	opts.secretOrKey = process.env.LOGIN_SECRET_TOKEN || 'someSecretToLogin';
+	passport.use(
+		new JWTstrategy(opts, function (jwt_payload, done) {
+			db.query(findByEmail, [jwt_payload.email], async (err, user) => {
+				if (err) {
+					return done(err, false);
+				}
+				if (user && user[0].activated === 1) {
+					done(null, user[0]);
+				} else {
+					done(null, false);
+				}
+			});
+		})
+	);
+	//passport.serializeUser((user, cb) => {
+	//cb(null, user[0].id);
+	//});
+	//passport.deserializeUser((id, cb) => {
+	//db.query(findById, [id], (err, user) => {
+	//const userInfo = {
+	//email: user.email
+	//}
+	//console.log(id)
+	//cb(err, userInfo);
+	//})
+	//})
+};
