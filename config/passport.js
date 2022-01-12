@@ -3,17 +3,27 @@ const LocalStrategy = require('passport-local').Strategy;
 const JWTstrategy = require('passport-jwt').Strategy;
 const db = require('../Models/database');
 require('dotenv').config();
+
+/**
+* Helper method to get cookie sent with request
+**/
 const cookieExtractor = function (req) {
 	var token = null;
 	if (req && req.cookies){
 			token = req.cookies.access_token;
-			console.log(token);
 	}
 	return token;
 };
 
 module.exports = function (passport) {
+
+	// Declare variables here	
 	const findByEmail = 'SELECT * FROM users WHERE email = ?';
+	var opts = {};
+	opts.jwtFromRequest = cookieExtractor; // check token in cookie
+	opts.secretOrKey = process.env.LOGIN_SECRET_TOKEN || 'someSecretToLogin';
+
+	// passport local strategy	
 	passport.use(
 		new LocalStrategy(
 			{
@@ -26,7 +36,7 @@ module.exports = function (passport) {
 					if (err) {
 						return done(err);
 					}
-					if (!user) {
+					if (user.length < 1) {
 						return done(null, false, {
 							message: 'Incorrect username or password.',
 						});
@@ -39,16 +49,15 @@ module.exports = function (passport) {
 					}
 					if (user[0].activated == 0)
 						return done(null, false, { message: 'Please verify your email' });
-					return done(null, user, {
+					return done(null, user[0], {
 						message: 'Login successfully',
 					});
 				});
 			}
 		)
 	);
-	var opts = {};
-	opts.jwtFromRequest = cookieExtractor; // check token in cookie
-	opts.secretOrKey = process.env.LOGIN_SECRET_TOKEN || 'someSecretToLogin';
+
+	// passport jwt strategy	
 	passport.use(
 		new JWTstrategy(opts, function (jwt_payload, done) {
 			db.query(findByEmail, [jwt_payload.email], async (err, user) => {
@@ -63,16 +72,4 @@ module.exports = function (passport) {
 			});
 		})
 	);
-	//passport.serializeUser((user, cb) => {
-	//cb(null, user[0].id);
-	//});
-	//passport.deserializeUser((id, cb) => {
-	//db.query(findById, [id], (err, user) => {
-	//const userInfo = {
-	//email: user.email
-	//}
-	//console.log(id)
-	//cb(err, userInfo);
-	//})
-	//})
 };

@@ -120,22 +120,65 @@ router.get('/api/user/verify/:token', async (req, res) => {
  */
 router.post('/api/login', (req, res, next) => {
 	passport.authenticate('local', (err, user) => {
-		if (err) throw err;
-		if (!user) res.send('No User Exists');
+		if (err) res.status(500).json({message: err});
+		if (!user){
+				return res.status(400).send('Current password does not match')
+		} 
 		else {
 			req.logIn(user, { session: false }, (err) => {
 				if (err) throw err;
-				const userObject = { id: user[0].id, email: user[0].email };
+				const userObject = { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name };
 				const token = jwt.sign(
 					userObject,
 					process.env.LOGIN_SECRET_TOKEN || 'someSecretToLogin'
 				);
-					return res.cookie("access_token", token, {
+					res.cookie("access_token", token, {
 							httpOnly: true,
 							secure: process.env.NODE_ENV === "production",
-					}).status(200).json({message: "Logged in successfully"})
+					}).status(200).json({user:{emai: user.email, first_name: user.first_name, last_name: user.last_name }, message: "Logged in successfully"})
 			});
 		}
 	})(req, res, next);
 });
+
+
+/**
+ * getCurrentUser
+ */
+router.get('/api/current-user', (req, res) => {
+		if(!req || !req.cookies){
+				return res.json({email: '', first_name: '', last_name: '', is_loggedIn: false});
+		}
+		const token = req.cookies.access_token	
+		const secret = process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin"
+		jwt.verify(token, secret, (err, decoded) => {
+				if(err || !decoded) return res.json({email: '', first_name: '', last_name: '', is_loggedIn: false})
+				const currentUser = {
+						email: decoded.email,
+						first_name: decoded.first_name,
+						last_name: decoded.last_name,
+						is_loggedIn: true
+				}
+				return res.json(currentUser)
+		
+		})
+
+
+})
+
+router.get('/api/logout', (req, res) => {
+    if (req.cookies.access_token) {
+        res
+        .clearCookie('access_token')
+        .status(200)
+        .json({
+            message: 'You have logged out'
+        })
+    } else {
+        res.status(401).json({
+            error: 'Invalid access_token'
+        })
+    }
+})
+
 module.exports = router

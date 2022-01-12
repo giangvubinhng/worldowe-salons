@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+// Create a transport with using email and password of sender
 const transport = nodemailer.createTransport({
 	service: 'Gmail',
 	auth: {
