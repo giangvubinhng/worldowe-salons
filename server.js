@@ -1,8 +1,9 @@
 const express = require('express');
+const _ = require('lodash')
 const { ApolloServer } = require('apollo-server-express');
 const app = express();
-const { typeDefs } = require('./Schema/TypeDefs');
-const { resolvers } = require('./Schema/Resolvers');
+const { shopTypeDefs } = require('./Schema/ShopTypeDefs');
+const { shopResolvers } = require('./Schema/ShopResolvers');
 const passport = require('passport');
 const user = require('./Routes/user.js');
 const cors = require('cors');
@@ -19,8 +20,8 @@ async function startAppoloServer() {
 	app.use(cookies());
 	app.use(cors({origin: ["http://localhost:3000", "https://studio.apollographql.com"], credentials: true }));
 	const server = new ApolloServer({
-		typeDefs,
-		resolvers,
+		typeDefs: [shopTypeDefs],
+		resolvers: _.merge({}, shopResolvers),
 		context: ({req, res}) => {
 				const user = authUser(req);
 				return {req, res, user};

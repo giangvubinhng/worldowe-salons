@@ -1,18 +1,18 @@
-const salons = require('../Routes/salons');
+const shop = require('../Routes/salons');
 const {ForbiddenError} = require('apollo-server-express')
-const resolvers = {
+const shopResolvers = {
 	Query: {
-		async salons() {
-				return salons.getAllSalons(); 
+		async shops() {
+				return shop.getAllShops(); 
 		}, 
 	},
 	Mutation: {
 		createShop(_, args, context) {
 		if(!context.user) throw new ForbiddenError("Unauthorized")
-			salons.createNewSalon(args);
+			shop.createNewShop(args);
 			return args;
 		},
 	},
 };
 
-module.exports = { resolvers };
+module.exports = { shopResolvers };

@@ -3,7 +3,7 @@ const db = require('../Models/database');
 /**
  * Get All salon
  */
-exports.getAllSalons = () => {
+exports.getAllShops = () => {
 	const getAllQuery = 'SELECT * FROM location';
 	return new Promise((resolve, reject) => {
 		db.query(getAllQuery, (err, shops) => {
@@ -16,7 +16,7 @@ exports.getAllSalons = () => {
 /**
  * Create a new salon
  */
-exports.createNewSalon = (args) => {
+exports.createNewShop = (args) => {
 	return new Promise((resolve, reject) => {
 		// Declare variables here	
 		const phone = args.phone;

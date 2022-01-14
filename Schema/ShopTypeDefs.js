@@ -1,8 +1,8 @@
 const { gql } = require('apollo-server-express');
 
-const typeDefs = gql`
+const shopTypeDefs = gql`
 	# Types
-	type Salon {
+	type Shop {
 		user_id: Int
 		shop_name: String!
 		street: String!
@@ -24,7 +24,7 @@ const typeDefs = gql`
 
 	# Queries
 	type Query {
-		salons: [Salon]
+		shops: [Shop]
 	}
 
 	# Mutations
@@ -39,8 +39,8 @@ const typeDefs = gql`
 			phone: String!
 			technicians: [String!]!
 			services: [String!]!
-		): Salon
+		): Shop
 	}
 `;
 
-module.exports = { typeDefs };
+module.exports = { shopTypeDefs };
