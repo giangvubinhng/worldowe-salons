@@ -16,20 +16,16 @@ exports.getAllShops = () => {
 /**
  * Create a new salon
  */
-exports.createNewShop = (args) => {
+exports.createNewShop = (user_id, shop) => {
 	return new Promise((resolve, reject) => {
 		// Declare variables here	
-		const phone = args.phone;
-		const shop_name = args.shop_name;
-		const shop_street = args.shop_street;
-		const shop_city = args.shop_city;
-		const shop_state = args.shop_state;
-		const shop_country = args.shop_country;
-		const technicians = args.technicians;
-		const shop_zip = args.shop_zip;
-		const services = args.services;
-		// get currentUser_id
-		const user_id = args.user.id;
+		const phone = shop.phone;
+		const shop_name = shop.shop_name;
+		const shop_street = shop.street;
+		const shop_city = shop.city;
+		const shop_state = shop.state;
+		const shop_country = shop.country;
+		const shop_zip = shop.zip;
 		//add location
 		db.query(
 			'INSERT IGNORE INTO location (user_id, shop_name, street, city, state, country, zip, phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
@@ -51,11 +47,21 @@ exports.createNewShop = (args) => {
 				}
 			}
 		);
-		// Technician of store
-		technicians.forEach((tech) => {
+		resolve(shop);
+	});
+};
+
+/*
+* Add technicians for shop
+*/
+exports.addTechnicians = (techs) => {
+	return new Promise((resolve, reject) => {
+		// hard code
+		const store_id = 1
+		techs.forEach((tech) => {
 			db.query(
-				'INSERT INTO technicians (technician_name, store_id) VALUES (?, ?)',
-				[tech, user_id],
+				'INSERT INTO technicians (store_id, technician_name) VALUES (?, ?)',
+				[store_id, tech],
 				(err, rows) => {
 					if (err) {
 						console.log(err);
@@ -66,11 +72,20 @@ exports.createNewShop = (args) => {
 				}
 			);
 		});
-		// Services for store
+		resolve(techs)
+	})
+}
+/*
+* Add services for shop
+*/
+exports.addServices = (services) => {
+	return new Promise((resolve, reject) => {
+	// hard code
+	const shop_id = 1;
 		services.forEach((service) => {
 			db.query(
-				'INSERT IGNORE INTO services (store_id, service_name) VALUES (?, ?)',
-				[user_id, service],
+				'INSERT IGNORE INTO services (shop_id, service_name) VALUES (?, ?)',
+				[shop_id, service],
 				(err, rows) => {
 					if (err) {
 						console.log(err);
@@ -81,6 +96,7 @@ exports.createNewShop = (args) => {
 				}
 			);
 		});
-		resolve(args);
-	});
-};
+		resolve(services);
+})
+
+}

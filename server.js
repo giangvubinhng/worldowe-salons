@@ -23,8 +23,8 @@ async function startAppoloServer() {
 		typeDefs: [shopTypeDefs],
 		resolvers: _.merge({}, shopResolvers),
 		context: ({req, res}) => {
-				const user = authUser(req);
-				return {req, res, user};
+			const user = authUser(req)
+			return {req, res, user}
 		}
 	});
 	await server.start();

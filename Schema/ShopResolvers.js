@@ -8,9 +8,11 @@ const shopResolvers = {
 	},
 	Mutation: {
 		createShop(_, args, context) {
-		if(!context.user) throw new ForbiddenError("Unauthorized")
-			shop.createNewShop(args);
-			return args;
+		if(!context.user){
+			throw new ForbiddenError("Unauthorized")
+		}
+			shop.createNewShop(context.user.id, args.shop);
+			return args.shop;
 		},
 	},
 };

@@ -33,8 +33,8 @@ router.post('/api/signup', async function (req, res) {
 				} else if (user.length === 0) {
 					if (email !== '' && req.body.password !== '') {
 						db.query(
-							'INSERT INTO users (email, first_name, last_name ,password, activated) VALUES (?, ?, ?, ?, ?)',
-							[email, first_name, last_name, encryptedPassword, false],
+							'INSERT INTO users (email, first_name, last_name, password, role, activated) VALUES (?, ?, ?, ?, ?, ?)',
+							[email, first_name, last_name, encryptedPassword, 1, false],
 							(err, result) => {
 								if (err) {
 									console.log(err);

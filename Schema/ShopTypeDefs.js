@@ -4,6 +4,7 @@ const shopTypeDefs = gql`
 	# Types
 	type Shop {
 		user_id: Int
+		id: Int
 		shop_name: String!
 		street: String!
 		city: String!
@@ -14,13 +15,15 @@ const shopTypeDefs = gql`
 	}
 
 	# Input
-#	input Technician {
-#		name: String!
-#	}
-#
-#	input Service {
-#		name: String!
-#	}
+	input IShop{
+		shop_name: String!
+		street: String!
+		city: String!
+		state: String!
+		country: String!
+		zip: String!
+		phone: String!
+	}
 
 	# Queries
 	type Query {
@@ -29,17 +32,7 @@ const shopTypeDefs = gql`
 
 	# Mutations
 	type Mutation {
-		createShop(
-			shop_name: String!
-			shop_street: String!
-			shop_city: String!
-			shop_state: String!
-			shop_country: String!
-			shop_zip: String!
-			phone: String!
-			technicians: [String!]!
-			services: [String!]!
-		): Shop
+		createShop(shop: IShop!): Shop
 	}
 `;
 
