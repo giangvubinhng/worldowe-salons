@@ -13,6 +13,19 @@ exports.getAllShops = () => {
   });
 };
 
+/*
+ * Get this salon
+ */
+exports.getShop = (id) => {
+  const getShopQuery = "SELECT * FROM location WHERE id=?";
+  return new Promise((resolve, reject) => {
+    db.query(getShopQuery, [id], (err, result) => {
+      if (err) reject(err);
+      resolve(result[1]);
+    });
+  });
+};
+
 /**
  * Create a new salon
  */

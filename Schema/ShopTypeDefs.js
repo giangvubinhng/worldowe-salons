@@ -28,13 +28,19 @@ const shopTypeDefs = gql`
   # Queries
   type Query {
     shops: [Shop]
+    #Need to be worked on
+    shop(id: Int): Shop
+    # Need to be worked on
+    myShops: [Shop]
   }
 
   # Mutations
   type Mutation {
     createShop(shop: IShop!): Shop
-    addService(services: [String!]!): [String]!
-    addTechnician(techs: [String!]!): [String]!
+    # Need to be worked on
+    addService(services: [String!]!): [String!]!
+    # Need to be worked on
+    addTechnician(techs: [String!]!): [String!]!
   }
 `;
 

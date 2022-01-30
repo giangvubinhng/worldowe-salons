@@ -3,22 +3,42 @@ const { ForbiddenError } = require("apollo-server-express");
 const shopResolvers = {
   Query: {
     async shops() {
-      return shop.getAllShops();
+      try {
+        return await shop.getAllShops();
+      } catch (e) {
+        return e;
+      }
+    },
+    //Need to be worked on
+    async myShops(_, args, context) {},
+    //Need to be worked on
+    async shop(_, args) {
+      try {
+        return await shop.getShop(args.id);
+      } catch (e) {
+        console.log(e);
+      }
     },
   },
   Mutation: {
-    createShop(_, args, context) {
+    async createShop(_, args, context) {
       if (!context.user) {
         throw new ForbiddenError("Unauthorized");
       }
-      shop.createNewShop(context.user.id, args.shop);
-      return args.shop;
+      try {
+        await shop.createNewShop(context.user.id, args.shop);
+        return args.shop;
+      } catch (e) {
+        return e;
+      }
     },
+    //Need to be worked on
     addService(_, args, context) {
       if (!context.user) {
         throw new ForbiddenError("Unauthorized");
       }
     },
+    //Need to be worked on
     addTechnician(_, args, context) {
       if (!context.user) {
         throw new ForbiddenError("Unauthorized");
