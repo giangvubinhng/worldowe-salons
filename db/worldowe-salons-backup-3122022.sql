@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.2
+-- version 5.1.0
 -- https://www.phpmyadmin.net/
 --
--- Host: db
--- Generation Time: Mar 12, 2022 at 11:27 PM
--- Server version: 8.0.28
--- PHP Version: 8.0.15
+-- Host: 127.0.0.1
+-- Generation Time: Dec 20, 2021 at 04:15 AM
+-- Server version: 10.4.19-MariaDB
+-- PHP Version: 8.0.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,25 +28,21 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `location` (
-  `user_id` int DEFAULT NULL,
-  `id` int NOT NULL,
-  `shop_name` varchar(255) NOT NULL,
+  `user_id` int(20) DEFAULT NULL,
   `street` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
   `state` varchar(255) NOT NULL,
   `country` varchar(255) NOT NULL,
-  `zip` varchar(255) NOT NULL,
-  `phone` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `zip` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `location`
 --
 
-INSERT INTO `location` (`user_id`, `id`, `shop_name`, `street`, `city`, `state`, `country`, `zip`, `phone`) VALUES
-(15, 1, '', 'New street', 'Blacksburg', 'va', 'va', '24060', ''),
-(16, 2, '', 'New street', 'Lexington', 'Kentucky', 'Kentucky', '24060', ''),
-(15, 3, 'Giang Nail', '123 N FIled', 'Hampton', '', '', '23777', '123446');
+INSERT INTO `location` (`user_id`, `street`, `city`, `state`, `country`, `zip`) VALUES
+(15, 'New street', 'Blacksburg', 'va', 'va', '24060'),
+(16, 'New street', 'Lexington', 'Kentucky', 'Kentucky', '24060');
 
 -- --------------------------------------------------------
 
@@ -55,9 +51,19 @@ INSERT INTO `location` (`user_id`, `id`, `shop_name`, `street`, `city`, `state`,
 --
 
 CREATE TABLE `services` (
-  `shop_id` int NOT NULL,
+  `user_id` int(20) NOT NULL,
   `service_name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `services`
+--
+
+INSERT INTO `services` (`user_id`, `service_name`) VALUES
+(15, 'leg'),
+(15, 'arm'),
+(16, 'pedicure'),
+(16, 'hair cut');
 
 -- --------------------------------------------------------
 
@@ -66,10 +72,20 @@ CREATE TABLE `services` (
 --
 
 CREATE TABLE `technicians` (
-  `shop_id` int NOT NULL,
   `technician_name` varchar(255) NOT NULL,
-  `id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `user_id` int(20) NOT NULL,
+  `id` int(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `technicians`
+--
+
+INSERT INTO `technicians` (`technician_name`, `user_id`, `id`) VALUES
+('Shayla Hoang', 15, 13),
+('Hoan Pham', 15, 14),
+('Thanh Tran', 16, 15),
+('Khanh Pham', 16, 16);
 
 -- --------------------------------------------------------
 
@@ -78,22 +94,21 @@ CREATE TABLE `technicians` (
 --
 
 CREATE TABLE `users` (
-  `id` int NOT NULL,
+  `id` int(20) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` char(128) NOT NULL,
-  `first_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `last_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `role` int DEFAULT NULL,
+  `shop_name` varchar(255) NOT NULL,
+  `phone` varchar(20) NOT NULL,
   `activated` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `role`, `activated`) VALUES
-(15, 'kaitokid141264@gmail.com', '$2b$10$aH93YzGN5xYwz/E74pLQc.Keakfok7R.c.uNqk2zt1QbY4X6Lpz5S', 'GT NAIL', '08091231', 0, 1),
-(16, 'trungteo0707@gmail.com', '$2b$10$Jn2w.RmXuCnqJYwcFyZwnOLNMx/dYheIeQqgiBSSI3yQbGMHMO642', 'TRUNG NAIL', '08091231', 0, 1);
+INSERT INTO `users` (`id`, `email`, `password`, `shop_name`, `phone`, `activated`) VALUES
+(15, 'kaitokid141264@gmail.com', '$2b$10$aH93YzGN5xYwz/E74pLQc.Keakfok7R.c.uNqk2zt1QbY4X6Lpz5S', 'GT NAIL', '08091231', 1),
+(16, 'trungteo0707@gmail.com', '$2b$10$Jn2w.RmXuCnqJYwcFyZwnOLNMx/dYheIeQqgiBSSI3yQbGMHMO642', 'TRUNG NAIL', '08091231', 1);
 
 -- --------------------------------------------------------
 
@@ -102,9 +117,9 @@ INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `role
 --
 
 CREATE TABLE `verification_token` (
-  `user_id` int NOT NULL,
+  `user_id` int(20) NOT NULL,
   `token` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for dumped tables
@@ -114,21 +129,20 @@ CREATE TABLE `verification_token` (
 -- Indexes for table `location`
 --
 ALTER TABLE `location`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `location_ibfk_1` (`user_id`);
 
 --
 -- Indexes for table `services`
 --
 ALTER TABLE `services`
-  ADD KEY `user_id` (`shop_id`);
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `technicians`
 --
 ALTER TABLE `technicians`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`shop_id`);
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `users`
@@ -148,22 +162,16 @@ ALTER TABLE `verification_token`
 --
 
 --
--- AUTO_INCREMENT for table `location`
---
-ALTER TABLE `location`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
 -- AUTO_INCREMENT for table `technicians`
 --
 ALTER TABLE `technicians`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
@@ -179,13 +187,13 @@ ALTER TABLE `location`
 -- Constraints for table `services`
 --
 ALTER TABLE `services`
-  ADD CONSTRAINT `services_ibfk_1` FOREIGN KEY (`shop_id`) REFERENCES `location` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `services_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `technicians`
 --
 ALTER TABLE `technicians`
-  ADD CONSTRAINT `technicians_ibfk_1` FOREIGN KEY (`shop_id`) REFERENCES `location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `technicians_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `verification_token`
