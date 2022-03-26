@@ -2,10 +2,97 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const db = require("../Models/database");
-const emailingService = require("../services/emailing.service.js");
+const emailingService = require("./emailing.service.js");
 require("dotenv").config();
 require("../config/passport")(passport);
 
+
+const findByEmail = 'SELECT * FROM users WHERE email = ?';
+// Functions start here
+const userRegister = (body) => {
+	return new Promise(async (resolve, reject) => {
+		// Hash password
+		const encryptedPassword = await bcrypt.hash(
+			body.password,
+			parseInt(process.env.SALT_ROUNDS)
+		);
+		//data from front end
+		const email = body.email;
+		const first_name = body.first_name;
+		const last_name = body.last_name;
+
+		db.query(
+			findByEmail,
+			[email],
+			(err, user) => {
+				if (err) {
+					return reject({success: false, message: err})
+				} else if (user.length > 0) {
+					return reject({success: false, message: "This email already exists"});
+				} else if (user.length === 0) {
+					if (email !== "" && body.password !== "") {
+						db.query(
+							"INSERT INTO users (email, first_name, last_name, password, role, activated) VALUES (?, ?, ?, ?, ?, ?)",
+							[email, first_name, last_name, encryptedPassword, 1, false],
+							(err, result) => {
+								if (err) {
+									return reject({success: false, message: err})
+								} else {
+									const user_id = result.insertId;
+									const token = jwt.sign(
+										{email: body.email, id: user_id},
+										process.env.VERIFICATION_TOKEN
+									);
+									db.query(
+										"INSERT INTO verification_token (user_id, token) VALUES (?, ?)",
+										[user_id, token],
+										(err) => {
+											if (err) {
+												return reject({success: false, message: err})
+											}
+										}
+									);
+									emailingService.sendConfirmationEmail(
+										first_name,
+										email,
+										token
+									);
+									return resolve({success: true, message: "Registered successfully. Please check your email"})
+								}
+							}
+						);
+					}
+				}
+			})
+
+	})
+}
+
+const userLogin = (email, password) => {
+	return new Promise((resolve, reject) => {
+		db.query(findByEmail, [email], async (err, user) => {
+			if(err) return reject({success: false, message: err})
+			if (user.length < 1){
+				return reject({success: false, message: "Incorrect username or password"})
+			}
+			const correctPassword = await bcrypt.compare(password, user[0].password);
+			if(!correctPassword)
+			{
+				return reject({success: false, message: "Incorrect username or password"})
+			}
+			if (user[0].activated == 0)
+			{
+				return reject({success: false, message: "Please verify your email address"})
+			}
+			const token = jwt.sign(
+				{id: user[0].id, email: user[0].email, first_name: user[0].first_name, last_name: user[0].last_name},
+				process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin"
+			);
+			return resolve({success: true, message: "Logged in successfully", user: user[0], token})
+		} )
+		
+	})
+}
 
 const getCurrentUser = (token) => {
 	const secret = process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin";
@@ -24,7 +111,7 @@ const getCurrentUser = (token) => {
 				last_name: decoded.last_name,
 				is_loggedIn: true,
 			};
-			return res.resolve(currentUser);
+			return resolve(currentUser);
 		});
 	})
 }
@@ -59,12 +146,10 @@ const verifyUser = (token) => {
 										}
 									);
 									return resolve({success: true, message: "Verified successfully"})
-									//return res.status(200).send("Verified successfully!");
 								}
 							}
 						);
 					} else {
-						//return res.status(400).send("User can't be verified.");
 						return reject({success: true, message: "User can't be verified"})
 					}
 				}
@@ -74,6 +159,9 @@ const verifyUser = (token) => {
 }
 
 module.exports = {
+	userRegister,
+	userLogin,
 	getCurrentUser,
 	verifyUser
+
 }
