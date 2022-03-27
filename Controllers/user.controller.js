@@ -1,11 +1,4 @@
-const bcrypt = require("bcrypt");
-const passport = require("passport");
-const jwt = require("jsonwebtoken");
-const db = require("../Models/database");
-const emailingService = require("../services/emailing.service.js");
 const userService = require("../services/user.service")
-require("dotenv").config();
-require("../config/passport")(passport);
 
 /**
 	* User register
@@ -82,11 +75,13 @@ const getCurrentUser = async (req, res) => {
 const userLogout = (req, res) => {
 	if (req.cookies.access_token) {
 		res.clearCookie("access_token").status(200).json({
+			success: true,
 			message: "You have logged out",
 		});
 	} else {
 		res.status(401).json({
-			error: "Invalid access_token",
+			success: false,
+			message: "Invalid access_token",
 		});
 	}
 }
