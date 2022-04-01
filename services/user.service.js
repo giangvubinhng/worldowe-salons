@@ -71,17 +71,15 @@ const userRegister = (body) => {
 const userLogin = (email, password) => {
 	return new Promise((resolve, reject) => {
 		db.query(findByEmail, [email], async (err, user) => {
-			if(err) return reject({success: false, message: err})
-			if (user.length < 1){
+			if (err) return reject({success: false, message: err})
+			if (user.length < 1) {
 				return reject({success: false, message: "Incorrect username or password"})
 			}
 			const correctPassword = await bcrypt.compare(password, user[0].password);
-			if(!correctPassword)
-			{
+			if (!correctPassword) {
 				return reject({success: false, message: "Incorrect username or password"})
 			}
-			if (user[0].activated == 0)
-			{
+			if (user[0].activated == 0) {
 				return reject({success: false, message: "Please verify your email address"})
 			}
 			const token = jwt.sign(
@@ -89,8 +87,8 @@ const userLogin = (email, password) => {
 				process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin"
 			);
 			return resolve({success: true, message: "Logged in successfully", user: user[0], token})
-		} )
-		
+		})
+
 	})
 }
 
@@ -126,7 +124,7 @@ const verifyUser = (token) => {
 					console.log(err);
 					return reject(err)
 				} else {
-					if (token && token[0].user_id) {
+					if (token.length > 0 && token[0].user_id) {
 						db.query(
 							"UPDATE users SET activated = true WHERE id = ?",
 							[token[0].user_id],

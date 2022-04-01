@@ -6,7 +6,7 @@ const shopResolvers = {
 			try {
 				const result = await shop.getAllShops();
 				if (result && result.success) {
-					return result
+					return result.shops
 				}
 
 			} catch (e) {
@@ -20,7 +20,7 @@ const shopResolvers = {
 			try {
 				const result = await shop.getShop(args.id);
 				if (result && result.success) {
-					return result
+					return result.shop
 				}
 
 			} catch (e) {
