@@ -10,7 +10,7 @@ router.post("/signup", userController.userRegister);
 /**
  * Verify user after registration using email service
  */
-router.get("/user/verify/:token", userController.verifyUser);
+router.get("/verify/:token", userController.verifyUser);
 
 /**
  * User sign in

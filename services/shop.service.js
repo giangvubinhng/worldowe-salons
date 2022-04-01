@@ -21,7 +21,7 @@ const getShop = (id) => {
 	return new Promise((resolve, reject) => {
 		db.query(getShopQuery, [id], (err, result) => {
 			if (err) return reject({success: false, message: err});
-			return resolve({success: true, message: "Retrieve one shop successfully", shop: result[1]});
+			return resolve({success: true, message: "Retrieve one shop successfully", shop: result[0]});
 		});
 	});
 };

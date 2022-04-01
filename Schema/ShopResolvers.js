@@ -15,7 +15,7 @@ const shopResolvers = {
 		},
 		//Need to be worked on
 		async myShops(_, args, context) {},
-		//Need to be worked on
+
 		async shop(_, args) {
 			try {
 				const result = await shop.getShop(args.id);

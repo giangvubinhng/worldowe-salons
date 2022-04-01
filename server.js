@@ -6,6 +6,7 @@ const {shopTypeDefs} = require("./Schema/ShopTypeDefs");
 const {shopResolvers} = require("./Schema/ShopResolvers");
 const passport = require("passport");
 const user = require("./Routes/user.js");
+const shops = require("./Routes/shop.js");
 const cors = require("cors");
 const cookies = require("cookie-parser");
 const {authUser} = require("./config/auth");
@@ -37,7 +38,8 @@ async function startAppoloServer() {
 	app.get("/", (req, res) => {
 		res.send("Sorry, Worldowe is currently under development!");
 	});
-	app.use("/api", user);
+	app.use("/api/user", user);
+	app.use("/api/shops", shops);
 	app.listen(port, () => {
 		console.log(`Example app listening at ${port}`);
 	});
