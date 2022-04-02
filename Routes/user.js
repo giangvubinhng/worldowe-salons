@@ -27,4 +27,15 @@ router.get("/current-user", userController.getCurrentUser);
  */
 router.get("/logout", userController.userLogout);
 
+/**
+ * reset password base on token
+ */
+router.post("/resetpass/:token", userController.userReset);
+
+/**
+ * reset password with send to email
+ */
+
+router.post("/email-reset", userController.resetPasswordWithEmail);
+
 module.exports = router;

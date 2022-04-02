@@ -3,6 +3,7 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const db = require("../Models/database");
 const emailingService = require("./emailing.service.js");
+const { promises } = require("nodemailer/lib/xoauth2");
 require("dotenv").config();
 require("../config/passport")(passport);
 
@@ -82,7 +83,7 @@ const userLogin = (email, password) => {
 			if (user[0].activated == 0) {
 				return reject({success: false, message: "Please verify your email address"})
 			}
-			const token = jwt.sign(
+			const token = jwt.sign(	
 				{id: user[0].id, email: user[0].email, first_name: user[0].first_name, last_name: user[0].last_name},
 				process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin"
 			);
@@ -156,10 +157,58 @@ const verifyUser = (token) => {
 	})
 }
 
+const resetPassword = (token, password) => {
+	const secret = process.env.RESET_PASSWORD_TOKEN || "someSecretToLogin";
+	return new Promise((resolve, reject) => {
+		jwt.verify(token, secret, (err, decoded) => {
+		if (err || !decoded)
+			return reject({success: false, message: "failed decoded"});
+		db.query('SELECT * FROM users WHERE email = "' + decoded.email + '"',
+		async (err, user) => {
+			if(err) {
+				return reject({success: false, message: "failed user"});
+			}
+			else if(user.length > 0){
+				const encryptedPassword = await bcrypt.hash(
+					password,
+					parseInt(process.env.SALT_ROUNDS)
+				);
+						var data = {password: encryptedPassword};
+						console.log(data);
+						db.query('UPDATE users SET ? WHERE email ="' + decoded.email + '"', data, (err, result) => {
+							if(err){
+								return reject({success: false, message: err});
+							}
+							else{
+								return resolve({success: true, message: "Reset successfully"})
+							}
+						})
+			}
+		})
+	})
+	});
+}
+
+const resetPasswordWithEmail = (email) => {
+	return new Promise((resolve, reject) => {
+		const token = jwt.sign(
+			{email: email},
+			process.env.RESET_PASSWORD_TOKEN
+		);
+		emailingService.sendResetPasswordEmail(
+			token,
+			email
+		);
+		return resolve({success: true, message: "email sent"});
+	});
+}
+
+
 module.exports = {
 	userRegister,
 	userLogin,
 	getCurrentUser,
-	verifyUser
-
+	verifyUser,
+	resetPassword,
+	resetPasswordWithEmail
 }

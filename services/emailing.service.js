@@ -10,7 +10,7 @@ const transport = nodemailer.createTransport({
   },
 });
 
-module.exports.sendConfirmationEmail = (
+const sendConfirmationEmail = (
   first_name,
   email,
   confirmationCode
@@ -33,3 +33,22 @@ module.exports.sendConfirmationEmail = (
       )
     );
 };
+
+const sendResetPasswordEmail = (token, email) => {
+  transport.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "reset password",
+    html: `
+    <p>Hello</p>
+    <a href=http://localhost:3000/resetpass/${token}> Click here</a>
+    `,
+  })
+  .catch((err) => err);
+};
+
+module.exports = {
+  sendConfirmationEmail,
+  sendResetPasswordEmail
+
+}
