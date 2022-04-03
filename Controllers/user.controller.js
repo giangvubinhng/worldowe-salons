@@ -86,11 +86,38 @@ const userLogout = (req, res) => {
 	}
 }
 
+const userReset = async (req, res) => {
+	try {
+		const result = await userService.resetPassword(req.params.token, req.body.password);
+		if (result && result.success) {
+			res.status(200).json(result)
+		}
+	} catch (e) {
+		res.status(400).json(e)
+	}
+}
+
+const resetPasswordWithEmail = async (req, res) => {
+	try{
+		const result = await userService.resetPasswordWithEmail(req.body.email);
+		if (result && result.success) {
+			res.status(200).json(result)
+		}
+	}
+	catch (e) {
+		res.status(400).json(e);
+	}
+}
+
+
+
 
 module.exports = {
 	userRegister,
 	userLogin,
 	verifyUser,
 	getCurrentUser,
-	userLogout
+	userLogout,
+	userReset,
+	resetPasswordWithEmail,
 }
