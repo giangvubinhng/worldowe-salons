@@ -163,10 +163,10 @@ const resetPassword = (token, password) => {
 		jwt.verify(token, secret, (err, decoded) => {
 		if (err || !decoded)
 			return reject({success: false, message: "failed decoded"});
-		db.query('SELECT * FROM users WHERE email = "' + decoded.email + '"',
+		db.query('SELECT * FROM verification_email WHERE email = "' + decoded.email + '"',
 		async (err, user) => {
 			if(err) {
-				return reject({success: false, message: "failed user"});
+				return reject({success: false, message: err});
 			}
 			else if(user.length > 0){
 				const encryptedPassword = await bcrypt.hash(
@@ -174,12 +174,19 @@ const resetPassword = (token, password) => {
 					parseInt(process.env.SALT_ROUNDS)
 				);
 						var data = {password: encryptedPassword};
-						console.log(data);
 						db.query('UPDATE users SET ? WHERE email ="' + decoded.email + '"', data, (err, result) => {
 							if(err){
 								return reject({success: false, message: err});
 							}
 							else{
+								db.query(
+									"DELETE FROM verification_email WHERE email = ?", decoded.email,
+									(err) => {
+										if(err) {
+											return reject(err);
+										}
+									}
+								);
 								return resolve({success: true, message: "Reset successfully"})
 							}
 						})
@@ -194,6 +201,14 @@ const resetPasswordWithEmail = (email) => {
 		const token = jwt.sign(
 			{email: email},
 			process.env.RESET_PASSWORD_TOKEN
+		);
+		db.query("INSERT INTO verification_email (email, token) VALUES (?, ?)",
+		[email, token],
+		(err) => {
+			if(err) {
+				return reject({success: false, message: err});
+			}
+		}
 		);
 		emailingService.sendResetPasswordEmail(
 			token,

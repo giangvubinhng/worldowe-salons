@@ -41,7 +41,7 @@ const sendResetPasswordEmail = (token, email) => {
     subject: "reset password",
     html: `
     <p>Hello</p>
-    <a href=http://localhost:3000/resetpass/${token}> Click here</a>
+    <a href=http://localhost:3000/reset-password/${token}> Click here</a>
     `,
   })
   .catch((err) => err);

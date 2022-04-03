@@ -87,8 +87,6 @@ const userLogout = (req, res) => {
 }
 
 const userReset = async (req, res) => {
-	console.log(req.params.token);
-	console.log(req.body.password);
 	try {
 		const result = await userService.resetPassword(req.params.token, req.body.password);
 		if (result && result.success) {

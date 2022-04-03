@@ -30,12 +30,12 @@ router.get("/logout", userController.userLogout);
 /**
  * reset password base on token
  */
-router.post("/resetpass/:token", userController.userReset);
+router.post("/reset-password/:token", userController.userReset);
 
 /**
  * reset password with send to email
  */
 
-router.post("/email-reset", userController.resetPasswordWithEmail);
+router.post("/send-reset-password-email", userController.resetPasswordWithEmail);
 
 module.exports = router;
