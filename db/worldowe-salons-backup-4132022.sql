@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Apr 13, 2022 at 04:34 PM
+-- Generation Time: Mar 12, 2022 at 11:27 PM
 -- Server version: 8.0.28
 -- PHP Version: 8.0.15
 
@@ -46,8 +46,7 @@ CREATE TABLE `location` (
 INSERT INTO `location` (`user_id`, `id`, `shop_name`, `street`, `city`, `state`, `country`, `zip`, `phone`) VALUES
 (15, 1, '', 'New street', 'Blacksburg', 'va', 'va', '24060', ''),
 (16, 2, '', 'New street', 'Lexington', 'Kentucky', 'Kentucky', '24060', ''),
-(15, 3, 'Giang Nail', '123 N FIled', 'Hampton', '', '', '23777', '123446'),
-(NULL, 4, 'New Shop To Test', 'New Street', 'New City', '', '', '123345', '123456789');
+(15, 3, 'Giang Nail', '123 N FIled', 'Hampton', '', '', '23777', '123446');
 
 -- --------------------------------------------------------
 
@@ -94,8 +93,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `role`, `activated`) VALUES
 (15, 'kaitokid141264@gmail.com', '$2b$10$aH93YzGN5xYwz/E74pLQc.Keakfok7R.c.uNqk2zt1QbY4X6Lpz5S', 'GT NAIL', '08091231', 0, 1),
-(16, 'trungteo0707@gmail.com', '$2b$10$Jn2w.RmXuCnqJYwcFyZwnOLNMx/dYheIeQqgiBSSI3yQbGMHMO642', 'TRUNG NAIL', '08091231', 0, 1),
-(18, 'giangnguyentit@gmail.com', '$2b$10$kmmU0fp0GeLctd93zmKVhObUJkIzzNReJns0f6CKqhitqpWLV4yD2', 'Hi', 'There', 1, 1);
+(16, 'trungteo0707@gmail.com', '$2b$10$Jn2w.RmXuCnqJYwcFyZwnOLNMx/dYheIeQqgiBSSI3yQbGMHMO642', 'TRUNG NAIL', '08091231', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -153,7 +151,7 @@ ALTER TABLE `verification_token`
 -- AUTO_INCREMENT for table `location`
 --
 ALTER TABLE `location`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `technicians`
@@ -165,7 +163,7 @@ ALTER TABLE `technicians`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
