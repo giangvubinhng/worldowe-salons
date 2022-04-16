@@ -38,4 +38,9 @@ router.post("/reset-password/:token", userController.userReset);
 
 router.post("/send-reset-password-email", userController.resetPasswordWithEmail);
 
+/**
+ * create change password
+ */
+router.post("/change-password", userController.changePassword);
+
 module.exports = router;

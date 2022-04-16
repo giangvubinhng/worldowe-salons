@@ -109,6 +109,17 @@ const resetPasswordWithEmail = async (req, res) => {
 	}
 }
 
+const changePassword = async (req, res) => {
+	try {
+		const result = await userService.changePassword(req.body.email, req.body.password, req.body.newPassword);
+		if(result && result.success){
+			res.status(200).json(result);
+		}
+	}
+	catch (e) {
+		res.status(400).json(e);
+	}
+}
 
 
 
@@ -120,4 +131,5 @@ module.exports = {
 	userLogout,
 	userReset,
 	resetPasswordWithEmail,
+	changePassword,
 }
