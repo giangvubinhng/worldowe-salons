@@ -3,23 +3,27 @@ const db = require('../Models/database')
 require('dotenv').config();
 
 
-const authUser = async (req) => {
+const authUser = async (req, res, next) => {
 	const secret = process.env.LOGIN_SECRET_TOKEN || 'someSecretToLogin';
 	if (req && req.cookies && req.cookies.access_token) {
 		const token = req.cookies.access_token;
 		try {
 			const user = await verifyToken(token, secret)
-			return user;
+			next();
 		} catch (e) {
-			return null;
+			res.status(403).json("Not Authorized")
+			next(e);
 		}
-		return user
 	}
-	return null
+	else{
+		res.status(403).json("Not Authorized")
+		
+	}
+	
 }
 
 const verifyToken = (token, secret) => {
-	return new Promise(() => {
+	return new Promise((resolve, reject) => {
 		jwt.verify(token, secret, function (err, decoded) {
 			if (err) {
 				return reject(err)

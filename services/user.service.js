@@ -218,31 +218,34 @@ const resetPasswordWithEmail = (email) => {
 	});
 }
 
-const changePassword = (email, password, newPassword) => {
+const changePassword = (token, newPassword) => {
+	const secret = process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin";
 	return new Promise((resolve, reject) => {
-		db.query(findByEmail, [email], async (err, user) => {
-			if(err) return reject({success: false, message: err});
-			if (user.length < 1){
-				return reject({success: false, message: 'Incorrect username or password'});
+		jwt.verify(token, secret, (err, decoded) => {
+			if(err || !decoded){
+				return reject({success: false, message: "have not login yet"});
 			}
-			const correctPassword = await bcrypt.compare(password, user[0].password);
-			if (!correctPassword) {
-				return reject({success: false, message: "Incorrect username or password"})
-			}
-			const encryptedPassword = await bcrypt.hash(
-				newPassword,
-				parseInt(process.env.SALT_ROUNDS)
-			);
-			var data = {password: encryptedPassword};
-			db.query('UPDATE users SET ? WHERE email ="' + email + '"', data, (err,result) => {
-				if(err){
-					return reject({success: false, message: err});
+			const email = decoded.email;
+			db.query(findByEmail, [email], async (err, user) => {
+				if(err) return reject({success: false, message: err});
+				if (user.length < 1){
+					return reject({success: false, message: 'Incorrect username or password'});
 				}
-				else{
-					return resolve({success: true, message: "Change Password successfully"});
-				}
+				const encryptedPassword = await bcrypt.hash(
+					newPassword,
+					parseInt(process.env.SALT_ROUNDS)
+				);
+				var data = {password: encryptedPassword};
+				db.query('UPDATE users SET ? WHERE email ="' + email + '"', data, (err,result) => {
+					if(err){
+						return reject({success: false, message: err});
+					}
+					else{
+						return resolve({success: true, message: "Change Password successfully"});
+					}
+				})
 			})
-		})
+		});
 	});
 }
 
