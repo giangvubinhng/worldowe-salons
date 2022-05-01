@@ -64,11 +64,13 @@ const getCurrentUser = async (req, res) => {
 			last_name: "",
 			is_loggedIn: false,
 		});
+		console.log("hit");
 	}
 	else {
 		const token = req.cookies.access_token;
 		const currentUser = await userService.getCurrentUser(token);
 		res.json(currentUser)
+		console.log(token);
 	}
 }
 
@@ -109,6 +111,19 @@ const resetPasswordWithEmail = async (req, res) => {
 	}
 }
 
+const changePassword = async (req, res) => {
+	try {
+		if (req && req.cookies){
+			const result = await userService.changePassword(req.cookies.access_token, req.body.newPassword);
+			if(result && result.success){
+				res.status(200).json(result);
+			}
+		}
+	}
+	catch (e) {
+		res.status(400).json(e);
+	}
+}
 
 
 
@@ -120,4 +135,5 @@ module.exports = {
 	userLogout,
 	userReset,
 	resetPasswordWithEmail,
+	changePassword,
 }
