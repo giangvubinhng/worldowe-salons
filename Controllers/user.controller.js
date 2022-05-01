@@ -58,19 +58,17 @@ const userLogin = async (req, res, next) => {
 }
 const getCurrentUser = async (req, res) => {
 	if (!req || !req.cookies) {
-		res.json({
+		return res.json({
 			email: "",
 			first_name: "",
 			last_name: "",
 			is_loggedIn: false,
 		});
-		console.log("hit");
 	}
 	else {
 		const token = req.cookies.access_token;
 		const currentUser = await userService.getCurrentUser(token);
-		res.json(currentUser)
-		console.log(token);
+		return res.json(currentUser)
 	}
 }
 
@@ -100,7 +98,7 @@ const userReset = async (req, res) => {
 }
 
 const resetPasswordWithEmail = async (req, res) => {
-	try{
+	try {
 		const result = await userService.resetPasswordWithEmail(req.body.email);
 		if (result && result.success) {
 			res.status(200).json(result)
@@ -113,9 +111,9 @@ const resetPasswordWithEmail = async (req, res) => {
 
 const changePassword = async (req, res) => {
 	try {
-		if (req && req.cookies){
+		if (req && req.cookies) {
 			const result = await userService.changePassword(req.cookies.access_token, req.body.newPassword);
-			if(result && result.success){
+			if (result && result.success) {
 				res.status(200).json(result);
 			}
 		}

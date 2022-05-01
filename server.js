@@ -9,7 +9,7 @@ const user = require("./Routes/user.js");
 const shops = require("./Routes/shop.js");
 const cors = require("cors");
 const cookies = require("cookie-parser");
-const {authUser} = require("./config/auth");
+const {authUser, authenticate_graphQL} = require("./config/auth");
 const port = process.env.PORT || 5000;
 require("./config/passport")(passport);
 require("dotenv").config();
@@ -29,7 +29,7 @@ async function startAppoloServer() {
 		typeDefs: [shopTypeDefs],
 		resolvers: _.merge({}, shopResolvers),
 		context: ({req, res}) => {
-			const user = authUser(req);
+			const user = authenticate_graphQL(req);
 			return {req, res, user};
 		},
 	});
@@ -41,7 +41,7 @@ async function startAppoloServer() {
 	app.use("/api/user", user);
 	app.use("/api/shops", shops);
 	app.listen(port, () => {
-		console.log(`Example app listening at ${port}`);
+		console.log(`Worldowe app listening at ${port}`);
 	});
 }
 startAppoloServer();

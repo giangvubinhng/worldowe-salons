@@ -3,7 +3,7 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const db = require("../Models/database");
 const emailingService = require("./emailing.service.js");
-const { promises } = require("nodemailer/lib/xoauth2");
+const {promises} = require("nodemailer/lib/xoauth2");
 require("dotenv").config();
 require("../config/passport")(passport);
 
@@ -83,7 +83,7 @@ const userLogin = (email, password) => {
 			if (user[0].activated == 0) {
 				return reject({success: false, message: "Please verify your email address"})
 			}
-			const token = jwt.sign(	
+			const token = jwt.sign(
 				{id: user[0].id, email: user[0].email, first_name: user[0].first_name, last_name: user[0].last_name},
 				process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin"
 			);
@@ -122,7 +122,6 @@ const verifyUser = (token) => {
 			[token],
 			(err, token) => {
 				if (err) {
-					console.log(err);
 					return reject(err)
 				} else {
 					if (token.length > 0 && token[0].user_id) {
@@ -131,7 +130,6 @@ const verifyUser = (token) => {
 							[token[0].user_id],
 							(err) => {
 								if (err) {
-									console.log(err);
 									return reject(err)
 								} else {
 									db.query(
@@ -139,7 +137,6 @@ const verifyUser = (token) => {
 										[token[0].user_id],
 										(err) => {
 											if (err) {
-												console.log(err);
 												return reject(err)
 											}
 										}
@@ -161,28 +158,28 @@ const resetPassword = (token, password) => {
 	const secret = process.env.RESET_PASSWORD_TOKEN || "someSecretToLogin";
 	return new Promise((resolve, reject) => {
 		jwt.verify(token, secret, (err, decoded) => {
-		if (err || !decoded)
-			return reject({success: false, message: "failed decoded"});
-		db.query('SELECT * FROM verification_email WHERE email = "' + decoded.email + '"',
-		async (err, user) => {
-			if(err) {
-				return reject({success: false, message: err});
-			}
-			else if(user.length > 0){
-				const encryptedPassword = await bcrypt.hash(
-					password,
-					parseInt(process.env.SALT_ROUNDS)
-				);
+			if (err || !decoded)
+				return reject({success: false, message: "failed decoded"});
+			db.query('SELECT * FROM verification_email WHERE email = "' + decoded.email + '"',
+				async (err, user) => {
+					if (err) {
+						return reject({success: false, message: err});
+					}
+					else if (user.length > 0) {
+						const encryptedPassword = await bcrypt.hash(
+							password,
+							parseInt(process.env.SALT_ROUNDS)
+						);
 						var data = {password: encryptedPassword};
 						db.query('UPDATE users SET ? WHERE email ="' + decoded.email + '"', data, (err, result) => {
-							if(err){
+							if (err) {
 								return reject({success: false, message: err});
 							}
-							else{
+							else {
 								db.query(
 									"DELETE FROM verification_email WHERE email = ?", decoded.email,
 									(err) => {
-										if(err) {
+										if (err) {
 											return reject(err);
 										}
 									}
@@ -190,9 +187,9 @@ const resetPassword = (token, password) => {
 								return resolve({success: true, message: "Reset successfully"})
 							}
 						})
-			}
+					}
+				})
 		})
-	})
 	});
 }
 
@@ -203,12 +200,12 @@ const resetPasswordWithEmail = (email) => {
 			process.env.RESET_PASSWORD_TOKEN
 		);
 		db.query("INSERT INTO verification_email (email, token) VALUES (?, ?)",
-		[email, token],
-		(err) => {
-			if(err) {
-				return reject({success: false, message: err});
+			[email, token],
+			(err) => {
+				if (err) {
+					return reject({success: false, message: err});
+				}
 			}
-		}
 		);
 		emailingService.sendResetPasswordEmail(
 			token,
@@ -222,13 +219,13 @@ const changePassword = (token, newPassword) => {
 	const secret = process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin";
 	return new Promise((resolve, reject) => {
 		jwt.verify(token, secret, (err, decoded) => {
-			if(err || !decoded){
+			if (err || !decoded) {
 				return reject({success: false, message: "have not login yet"});
 			}
 			const email = decoded.email;
 			db.query(findByEmail, [email], async (err, user) => {
-				if(err) return reject({success: false, message: err});
-				if (user.length < 1){
+				if (err) return reject({success: false, message: err});
+				if (user.length < 1) {
 					return reject({success: false, message: 'Incorrect username or password'});
 				}
 				const encryptedPassword = await bcrypt.hash(
@@ -236,11 +233,11 @@ const changePassword = (token, newPassword) => {
 					parseInt(process.env.SALT_ROUNDS)
 				);
 				var data = {password: encryptedPassword};
-				db.query('UPDATE users SET ? WHERE email ="' + email + '"', data, (err,result) => {
-					if(err){
+				db.query('UPDATE users SET ? WHERE email ="' + email + '"', data, (err, result) => {
+					if (err) {
 						return reject({success: false, message: err});
 					}
-					else{
+					else {
 						return resolve({success: true, message: "Change Password successfully"});
 					}
 				})
