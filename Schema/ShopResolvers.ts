@@ -1,5 +1,5 @@
 const shop = require("../services/shop.service");
-const {ForbiddenError} = require("apollo-server-express");
+import {ForbiddenError} from "apollo-server-express";
 const shopResolvers = {
 	Query: {
 		async shops() {
@@ -14,9 +14,9 @@ const shopResolvers = {
 			}
 		},
 		//Need to be worked on
-		async myShops(_, args, context) {},
+		async myShops(_: any, args: any, context: any) {},
 
-		async shop(_, args) {
+		async shop(_: any, args: any) {
 			try {
 				const result = await shop.getShop(args.id);
 				if (result && result.success) {
@@ -29,7 +29,7 @@ const shopResolvers = {
 		},
 	},
 	Mutation: {
-		async createShop(_, args, context) {
+		async createShop(_: any, args: any, context: any ) {
 			if (!context.user) {
 				throw new ForbiddenError("Unauthorized");
 			}
@@ -43,13 +43,13 @@ const shopResolvers = {
 			}
 		},
 		//Need to be worked on
-		addService(_, args, context) {
+		addService(_: any, args: any, context: any) {
 			if (!context.user) {
 				throw new ForbiddenError("Unauthorized");
 			}
 		},
 		//Need to be worked on
-		addTechnician(_, args, context) {
+		addTechnician(_: any, args: any, context: any) {
 			if (!context.user) {
 				throw new ForbiddenError("Unauthorized");
 			}
@@ -57,4 +57,4 @@ const shopResolvers = {
 	},
 };
 
-module.exports = {shopResolvers};
+export {shopResolvers};

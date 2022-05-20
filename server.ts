@@ -1,16 +1,18 @@
-const express = require("express");
-const _ = require("lodash");
-const {ApolloServer} = require("apollo-server-express");
-const app = express();
-const {shopTypeDefs} = require("./Schema/ShopTypeDefs");
-const {shopResolvers} = require("./Schema/ShopResolvers");
-const passport = require("passport");
-const user = require("./Routes/user.js");
-const shops = require("./Routes/shop.js");
-const cors = require("cors");
-const cookies = require("cookie-parser");
-const {authUser, authenticate_graphQL} = require("./config/auth");
+import express from "express"
+import _  from "lodash";
+// const {ApolloServer} = require("apollo-server-express");
+import {ApolloServer} from 'apollo-server-express'
+import {shopTypeDefs} from "./Schema/ShopTypeDefs";
+import {shopResolvers} from "./Schema/ShopResolvers";
+import passport from 'passport';
+import user from "./Routes/user";
+import shops from "./Routes/shop";
+import cors from "cors";
+import cookies from "cookie-parser";
+import {authenticate_graphQL} from "./config/auth";
+
 const port = process.env.PORT || 5000;
+const app = express();
 require("./config/passport")(passport);
 require("dotenv").config();
 

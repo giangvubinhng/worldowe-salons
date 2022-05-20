@@ -44,4 +44,4 @@ const shopTypeDefs = gql`
   }
 `;
 
-module.exports = { shopTypeDefs };
+export { shopTypeDefs };

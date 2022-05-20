@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../Models/database");
 const emailingService = require("./emailing.service.js");
 const {promises} = require("nodemailer/lib/xoauth2");
+import { QueryError, RowDataPacket } from 'mysql2';
 require("dotenv").config();
 require("../config/passport")(passport);
 
@@ -168,7 +169,7 @@ const resetPassword = (token, password) => {
 					else if (user.length > 0) {
 						const encryptedPassword = await bcrypt.hash(
 							password,
-							parseInt(process.env.SALT_ROUNDS)
+							parseInt(process.env.SALT_ROUNDS || "10")
 						);
 						var data = {password: encryptedPassword};
 						db.query('UPDATE users SET ? WHERE email ="' + decoded.email + '"', data, (err, result) => {

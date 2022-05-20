@@ -1,9 +1,10 @@
 const userService = require("../services/user.service")
+import {Request, Response, NextFunction} from 'express'
 
 /**
 	* User register
 	*/
-const userRegister = async (req, res) => {
+const userRegister = async (req: Request, res: Response) => {
 	try {
 		const result = await userService.userRegister(req.body)
 		if (result && result.success) {
@@ -17,7 +18,7 @@ const userRegister = async (req, res) => {
 /**
  * Verify user after registration using email service
  */
-const verifyUser = async (req, res) => {
+const verifyUser = async (req: Request, res: Response) => {
 	try {
 		const result = await userService.verifyUser(req.params.token);
 		if (result && result.success) {
@@ -29,7 +30,7 @@ const verifyUser = async (req, res) => {
 
 }
 
-const userLogin = async (req, res, next) => {
+const userLogin = async (req: Request, res: Response) => {
 	try {
 		const result = await userService.userLogin(req.body.email, req.body.password)
 		if (result && result.success) {
@@ -56,7 +57,7 @@ const userLogin = async (req, res, next) => {
 
 	}
 }
-const getCurrentUser = async (req, res) => {
+const getCurrentUser = async (req: Request, res: Response) => {
 	if (!req || !req.cookies) {
 		return res.json({
 			email: "",
@@ -72,7 +73,7 @@ const getCurrentUser = async (req, res) => {
 	}
 }
 
-const userLogout = (req, res) => {
+const userLogout = (req: Request, res: Response) => {
 	if (req.cookies.access_token) {
 		res.clearCookie("access_token").status(200).json({
 			success: true,
@@ -86,7 +87,7 @@ const userLogout = (req, res) => {
 	}
 }
 
-const userReset = async (req, res) => {
+const userReset = async (req: Request, res: Response) => {
 	try {
 		const result = await userService.resetPassword(req.params.token, req.body.password);
 		if (result && result.success) {
@@ -97,7 +98,7 @@ const userReset = async (req, res) => {
 	}
 }
 
-const resetPasswordWithEmail = async (req, res) => {
+const resetPasswordWithEmail = async (req: Request, res: Response) => {
 	try {
 		const result = await userService.resetPasswordWithEmail(req.body.email);
 		if (result && result.success) {
@@ -109,7 +110,7 @@ const resetPasswordWithEmail = async (req, res) => {
 	}
 }
 
-const changePassword = async (req, res) => {
+const changePassword = async (req: Request, res: Response) => {
 	try {
 		if (req && req.cookies) {
 			const result = await userService.changePassword(req.cookies.access_token, req.body.newPassword);

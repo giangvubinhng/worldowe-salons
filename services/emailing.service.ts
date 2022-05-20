@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 require("dotenv").config();
 
 // Create a transport with using email and password of sender
@@ -11,9 +11,9 @@ const transport = nodemailer.createTransport({
 });
 
 const sendConfirmationEmail = (
-  first_name,
-  email,
-  confirmationCode
+  first_name: string,
+  email: string,
+  confirmationCode: string
 ) => {
   transport
     .sendMail({
@@ -25,16 +25,20 @@ const sendConfirmationEmail = (
           <p>Thank you for joining Worldowe. Please confirm your email by clicking on the following link</p>
           <a href=http://localhost:3000/user/verify/${confirmationCode}> Click here</a>
           </div>`,
+    }).then((r) => {
+      return r;
     })
-    .catch((err) =>
+    .catch((err) =>{
       console.log(
         "An internal error has occured while trying to send email. Please try again later\n" +
           err
       )
+      return err
+    }
     );
 };
 
-const sendResetPasswordEmail = (token, email) => {
+const sendResetPasswordEmail = (token: string, email: string) => {
   transport.sendMail({
     from: process.env.EMAIL_USER,
     to: email,
@@ -43,12 +47,11 @@ const sendResetPasswordEmail = (token, email) => {
     <p>Hello</p>
     <a href=http://localhost:3000/reset-password/${token}> Click here</a>
     `,
-  })
+  }).then((r) => r)
   .catch((err) => err);
 };
 
-module.exports = {
+export {
   sendConfirmationEmail,
   sendResetPasswordEmail
-
 }

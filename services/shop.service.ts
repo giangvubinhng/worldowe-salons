@@ -1,4 +1,6 @@
 const db = require("../Models/database");
+import Shop from '../Models/Shop'
+import { QueryError, RowDataPacket } from 'mysql2';
 
 /**
  * Get All salon
@@ -6,7 +8,7 @@ const db = require("../Models/database");
 const getAllShops = () => {
 	const getAllQuery = "SELECT * FROM location";
 	return new Promise((resolve, reject) => {
-		db.query(getAllQuery, (err, shops) => {
+		db.query(getAllQuery, (err: QueryError, shops: Shop[]) => {
 			if (err) return reject({success: false, message: err});
 			return resolve({success: true, message: "Retrieved all shops successfully", shops: shops});
 		});
@@ -16,10 +18,10 @@ const getAllShops = () => {
 /*
  * Get this salon
  */
-const getShop = (id) => {
+const getShop = (id: string) => {
 	const getShopQuery = "SELECT * FROM location WHERE id=?";
 	return new Promise((resolve, reject) => {
-		db.query(getShopQuery, [id], (err, result) => {
+		db.query(getShopQuery, [id], (err: QueryError, result: RowDataPacket[]) => {
 			if (err) return reject({success: false, message: err});
 			return resolve({success: true, message: "Retrieve one shop successfully", shop: result[0]});
 		});
@@ -29,7 +31,7 @@ const getShop = (id) => {
 /**
  * Create a new salon
  */
-const createNewShop = (user_id, shop) => {
+const createNewShop = (user_id: string, shop: Shop) => {
 	return new Promise((resolve, reject) => {
 		// Declare variables here
 		const phone = shop.phone;
@@ -52,7 +54,7 @@ const createNewShop = (user_id, shop) => {
 				shop_zip,
 				phone,
 			],
-			(err, rows) => {
+			(err: QueryError) => {
 				if (err) {
 					return reject({success: false, message: err});
 				} else {
@@ -66,7 +68,7 @@ const createNewShop = (user_id, shop) => {
 /*
  * Add technicians for shop
  */
-const addTechnicians = (techs) => {
+const addTechnicians = (techs: string[]) => {
 	return new Promise((resolve, reject) => {
 		// hard code
 		const store_id = 1;
@@ -74,12 +76,10 @@ const addTechnicians = (techs) => {
 			db.query(
 				"INSERT INTO technicians (store_id, technician_name) VALUES (?, ?)",
 				[store_id, tech],
-				(err, rows) => {
+				(err: QueryError) => {
 					if (err) {
 						return reject({success: false, message: err});
-					} else {
-					}
-				}
+					} 				}
 			);
 		});
 		return resolve({success: true, message: "Added Technician(s) successfully", technicians: techs});
@@ -88,7 +88,7 @@ const addTechnicians = (techs) => {
 /*
  * Add services for shop
  */
-const addServices = (services) => {
+const addServices = (services: string[]) => {
 	return new Promise((resolve, reject) => {
 		// hard code
 		const shop_id = 1;
@@ -96,7 +96,7 @@ const addServices = (services) => {
 			db.query(
 				"INSERT IGNORE INTO services (shop_id, service_name) VALUES (?, ?)",
 				[shop_id, service],
-				(err, rows) => {
+				(err: QueryError) => {
 					if (err) {
 						return reject({success: false, message: err});
 					} else {

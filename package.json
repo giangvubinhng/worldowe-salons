@@ -5,6 +5,9 @@
 				"dev": "nodemon server.js"
 		},
 		"dependencies": {
+				"@types/lodash": "^4.14.182",
+				"@types/nodemailer": "^6.4.4",
+				"@types/passport": "^1.0.7",
 				"apollo-server-express": "^3.6.1",
 				"bcrypt": "^5.0.1",
 				"cookie-parser": "^1.4.6",
@@ -26,6 +29,8 @@
 				"yarn": "^1.22.17"
 		},
 		"devDependencies": {
+				"@types/graphql": "^14.5.0",
+				"@types/mysql2": "types/mysql2#",
 				"eslint": "^8.5.0",
 				"nodemon": "^2.0.14",
 				"ts-node": "^10.7.0",
