@@ -1,3 +1,4 @@
+console.log("dit me")
 import express from "express"
 import _ from "lodash";
 // const {ApolloServer} = require("apollo-server-express");

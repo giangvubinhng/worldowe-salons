@@ -1,7 +1,8 @@
 import express from 'express'
 const router = express.Router();
-const userMiddleware = require('../config/auth');
-const userController = require('../Controllers/user.controller')
+//const userMiddleware = require('../config/auth');
+import {authUser} from '../config/auth'
+import * as userController from '../Controllers/user.controller'
 
 /**
  * User sign Up
@@ -42,6 +43,6 @@ router.post("/send-reset-password-email", userController.resetPasswordWithEmail)
 /**
  * create change password
  */
-router.post("/change-password", userMiddleware.authUser, userController.changePassword);
+router.post("/change-password", authUser, userController.changePassword);
 
 export default router;

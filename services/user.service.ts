@@ -70,7 +70,7 @@ const userRegister = (body: UserSignUp) => {
 
 const userLogin = (email: string, password: string) => {
 	return new Promise((resolve, reject) => {
-		db.query(findByEmail, [email], async (err, user: RowDataPacket[]) => {
+		db.query(findByEmail, [email], async (err, user: any) => {
 			if (err) return reject({success: false, message: err})
 			if (user.length < 1) {
 				return reject({success: false, message: "Incorrect username or password"})
@@ -160,7 +160,7 @@ const resetPassword = (token: string, password: string) => {
 			if (err || !decoded)
 				return reject({success: false, message: "failed decoded"});
 			db.query('SELECT * FROM verification_email WHERE email = "' + decoded.email + '"',
-				async (err, user) => {
+				async (err, user: any) => {
 					if (err) {
 						return reject({success: false, message: err});
 					}

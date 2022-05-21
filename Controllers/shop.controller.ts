@@ -1,7 +1,7 @@
 import * as shopService from '../services/shop.service'
 import {Request, Response, NextFunction} from 'express'
 
-const getAllShop = async (req: Request, res: Response) => {
+const getAllShops = async (req: Request, res: Response) => {
 	try {
 		const result: any = await shopService.getAllShops();
 		if (result && result.success) {
@@ -14,6 +14,6 @@ const getAllShop = async (req: Request, res: Response) => {
 
 }
 
-module.exports = {
-	getAllShop
+export {
+	getAllShops
 }

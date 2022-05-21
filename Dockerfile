@@ -8,5 +8,5 @@ RUN if [ "$NODE_ENV" = "development" ]; \
 	fi
 COPY . ./
 EXPOSE 5000
-CMD ["node", "server.js"]
+CMD ["node", "server.ts"]
 
