@@ -14,7 +14,19 @@ const shopResolvers = {
 			}
 		},
 		//Need to be worked on
-		async myShops(_, args, context) {},
+		async myShops(_, args, context) {
+			if (!context.user) {
+				throw new ForbiddenError("Unauthorized");
+			}
+			try {
+				const result = await shop.getMyShops(context.user.id);
+				if (result && result.success) {
+					return result.shops;
+				}
+			} catch (e) {
+				return e
+			}
+		},
 
 		async shop(_, args) {
 			try {
@@ -34,7 +46,7 @@ const shopResolvers = {
 				throw new ForbiddenError("Unauthorized");
 			}
 			try {
-				const result = shop.createNewShop(context.user.id, args.shop);
+				const result = await shop.createNewShop(context.user.id, args.shop);
 				if (result && result.success) {
 					return result
 				}
@@ -42,16 +54,32 @@ const shopResolvers = {
 				return e;
 			}
 		},
-		//Need to be worked on
-		addService(_, args, context) {
+
+		async addServices(_, args, context) {
 			if (!context.user) {
 				throw new ForbiddenError("Unauthorized");
 			}
+			try {
+				const result = await shop.addServices(context.user.id, args.shop_id, args.services)
+				if (result && result.success) {
+					return result
+				}
+			} catch (e) {
+				return e
+			}
 		},
-		//Need to be worked on
-		addTechnician(_, args, context) {
+
+		async addTechnicians(_, args, context) {
 			if (!context.user) {
 				throw new ForbiddenError("Unauthorized");
+			}
+			try {
+				const result = await shop.addTechnicians(context.user.id, args.shop_id, args.techs)
+				if (result && result.success) {
+					return result
+				}
+			} catch (e) {
+				return e
 			}
 		},
 	},

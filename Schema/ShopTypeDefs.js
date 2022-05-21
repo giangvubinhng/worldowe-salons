@@ -1,4 +1,4 @@
-const { gql } = require("apollo-server-express");
+const {gql} = require("apollo-server-express");
 
 const shopTypeDefs = gql`
   # Types
@@ -38,10 +38,10 @@ const shopTypeDefs = gql`
   type Mutation {
     createShop(shop: IShop!): Shop
     # Need to be worked on
-    addService(services: [String!]!): [String!]!
+    addServices(services: [String!]!): [String!]!
     # Need to be worked on
-    addTechnician(techs: [String!]!): [String!]!
+    addTechnicians(techs: [String!]!): [String!]!
   }
 `;
 
-module.exports = { shopTypeDefs };
+module.exports = {shopTypeDefs};

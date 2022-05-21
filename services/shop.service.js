@@ -66,52 +66,89 @@ const createNewShop = (user_id, shop) => {
 /*
  * Add technicians for shop
  */
-const addTechnicians = (techs) => {
-	return new Promise((resolve, reject) => {
-		// hard code
-		const store_id = 1;
-		techs.forEach((tech) => {
-			db.query(
-				"INSERT INTO technicians (store_id, technician_name) VALUES (?, ?)",
-				[store_id, tech],
-				(err, rows) => {
-					if (err) {
-						return reject({success: false, message: err});
-					} else {
+const addTechnicians = (user_id, shop_id, techs) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const result = await isShopOwner(user_id, shop_id)
+			if (!result.success) {
+				return reject({success: false, message: "No permission"});
+			}
+			techs.forEach((tech) => {
+				db.query(
+					"INSERT INTO technicians (shop_id, technician_name) VALUES (?, ?)",
+					[shop_id, tech],
+					(err) => {
+						if (err) {
+							return reject({success: false, message: err});
+						}
 					}
-				}
-			);
-		});
-		return resolve({success: true, message: "Added Technician(s) successfully", technicians: techs});
+				);
+			});
+			return resolve({success: true, message: "Added Technician(s) successfully", technicians: techs});
+		} catch (e) {
+			return reject({success: false, message: e});
+		}
 	});
 };
 /*
  * Add services for shop
  */
-const addServices = (services) => {
+const addServices = (user_id, shop_id, services) => {
 	return new Promise((resolve, reject) => {
-		// hard code
-		const shop_id = 1;
-		services.forEach((service) => {
-			db.query(
-				"INSERT IGNORE INTO services (shop_id, service_name) VALUES (?, ?)",
-				[shop_id, service],
-				(err, rows) => {
-					if (err) {
-						return reject({success: false, message: err});
-					} else {
+		try {
+			const result = await isShopOwner(user_id, shop_id)
+			if (!result.success) {
+				return reject({success: false, message: "No permission"});
+			}
+			services.forEach((service) => {
+				db.query(
+					"INSERT IGNORE INTO services (shop_id, service_name) VALUES (?, ?)",
+					[shop_id, service],
+					(err) => {
+						if (err) {
+							return reject({success: false, message: err});
+						}
 					}
-				}
-			);
-		});
-		return resolve({success: true, message: "Added Service(s) successfully", services: services});
+				);
+			});
+			return resolve({success: true, message: "Added Service(s) successfully", services: services});
+		} catch (e) {
+			return reject({success: false, message: e});
+		}
 	});
 };
+
+const getMyShops = (user_id) => {
+	const getShopQuery = "SELECT * FROM location WHERE user_id=?";
+	return new Promise((resolve, reject) => {
+		db.query(getShopQuery, [user_id], (err, result) => {
+			if (err) return reject({success: false, message: err});
+			return resolve({success: true, message: "Retrieve shops successfully", shops: result});
+		});
+	});
+}
+/*
+	* Helper functions
+	*/
+async function isShopOwner(user_id, shop_id) {
+	const getShopQuery = "SELECT * FROM location WHERE user_id=? AND id=?";
+	return new Promise((resolve, reject) => {
+		db.query(getShopQuery, [user_id, shop_id], (err, result) => {
+			if (err) return reject({success: false, message: err});
+			if (result.length == 0) {
+				return reject({success: false, message: "You can't perform action on shop"});
+			}
+			return resolve({success: true, message: "Shop exists", shops: result[0]});
+		});
+	});
+}
+
 
 module.exports = {
 	addServices,
 	getAllShops,
 	getShop,
 	addTechnicians,
-	createNewShop
+	createNewShop,
+	getMyShops
 }
