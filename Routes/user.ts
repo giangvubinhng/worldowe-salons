@@ -44,4 +44,4 @@ router.post("/send-reset-password-email", userController.resetPasswordWithEmail)
  */
 router.post("/change-password", userMiddleware.authUser, userController.changePassword);
 
-module.exports = router;
+export default router;

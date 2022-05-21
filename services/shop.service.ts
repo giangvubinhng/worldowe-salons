@@ -1,6 +1,5 @@
-const db = require("../Models/database");
+import db from "../Models/database"
 import Shop from '../Models/Shop'
-import { QueryError, RowDataPacket } from 'mysql2';
 
 /**
  * Get All salon
@@ -8,7 +7,7 @@ import { QueryError, RowDataPacket } from 'mysql2';
 const getAllShops = () => {
 	const getAllQuery = "SELECT * FROM location";
 	return new Promise((resolve, reject) => {
-		db.query(getAllQuery, (err: QueryError, shops: Shop[]) => {
+		db.query(getAllQuery, (err, shops: Shop[]) => {
 			if (err) return reject({success: false, message: err});
 			return resolve({success: true, message: "Retrieved all shops successfully", shops: shops});
 		});
@@ -21,7 +20,7 @@ const getAllShops = () => {
 const getShop = (id: string) => {
 	const getShopQuery = "SELECT * FROM location WHERE id=?";
 	return new Promise((resolve, reject) => {
-		db.query(getShopQuery, [id], (err: QueryError, result: RowDataPacket[]) => {
+		db.query(getShopQuery, [id], (err, result: any) => {
 			if (err) return reject({success: false, message: err});
 			return resolve({success: true, message: "Retrieve one shop successfully", shop: result[0]});
 		});
@@ -54,7 +53,7 @@ const createNewShop = (user_id: string, shop: Shop) => {
 				shop_zip,
 				phone,
 			],
-			(err: QueryError) => {
+			(err) => {
 				if (err) {
 					return reject({success: false, message: err});
 				} else {
@@ -76,10 +75,11 @@ const addTechnicians = (techs: string[]) => {
 			db.query(
 				"INSERT INTO technicians (store_id, technician_name) VALUES (?, ?)",
 				[store_id, tech],
-				(err: QueryError) => {
+				(err) => {
 					if (err) {
 						return reject({success: false, message: err});
-					} 				}
+					}
+				}
 			);
 		});
 		return resolve({success: true, message: "Added Technician(s) successfully", technicians: techs});
@@ -96,7 +96,7 @@ const addServices = (services: string[]) => {
 			db.query(
 				"INSERT IGNORE INTO services (shop_id, service_name) VALUES (?, ?)",
 				[shop_id, service],
-				(err: QueryError) => {
+				(err) => {
 					if (err) {
 						return reject({success: false, message: err});
 					} else {
@@ -108,7 +108,7 @@ const addServices = (services: string[]) => {
 	});
 };
 
-module.exports = {
+export {
 	addServices,
 	getAllShops,
 	getShop,

@@ -1,9 +1,9 @@
-const shopService = require("../services/shop.service")
+import * as shopService from '../services/shop.service'
 import {Request, Response, NextFunction} from 'express'
 
 const getAllShop = async (req: Request, res: Response) => {
 	try {
-		const result = await shopService.getAllShops();
+		const result: any = await shopService.getAllShops();
 		if (result && result.success) {
 			res.status(200).json(result)
 		}

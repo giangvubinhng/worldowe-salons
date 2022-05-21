@@ -1,25 +1,28 @@
 import express from "express"
-import _  from "lodash";
+import _ from "lodash";
 // const {ApolloServer} = require("apollo-server-express");
 import {ApolloServer} from 'apollo-server-express'
 import {shopTypeDefs} from "./Schema/ShopTypeDefs";
 import {shopResolvers} from "./Schema/ShopResolvers";
-import passport from 'passport';
+//import passport from 'passport';
 import user from "./Routes/user";
-import shops from "./Routes/shop";
 import cors from "cors";
+import shop from "./Routes/shop";
 import cookies from "cookie-parser";
 import {authenticate_graphQL} from "./config/auth";
 
+
 const port = process.env.PORT || 5000;
 const app = express();
-require("./config/passport")(passport);
+//require("./config/passport")(passport);
 require("dotenv").config();
+
+console.log("sup")
 
 async function startAppoloServer() {
 	app.use(express.urlencoded({extended: true})); // New
 	app.use(express.json()); // New
-	app.use(passport.initialize());
+	//app.use(passport.initialize());
 	app.use(cookies());
 	app.use(
 		cors({
@@ -41,8 +44,8 @@ async function startAppoloServer() {
 		res.send("Sorry, Worldowe is currently under development!");
 	});
 	app.use("/api/user", user);
-	app.use("/api/shops", shops);
 	app.listen(port, () => {
+		app.use("/api/shops", shop);
 		console.log(`Worldowe app listening at ${port}`);
 	});
 }

@@ -57,7 +57,7 @@ const verifyToken = (token, secret) => {
 	})
 }
 
-module.exports = {
+export {
 	authUser,
 	authenticate_graphQL
 }
