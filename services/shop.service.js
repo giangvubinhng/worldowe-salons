@@ -94,7 +94,7 @@ const addTechnicians = (user_id, shop_id, techs) => {
  * Add services for shop
  */
 const addServices = (user_id, shop_id, services) => {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		try {
 			const result = await isShopOwner(user_id, shop_id)
 			if (!result.success) {
