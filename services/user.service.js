@@ -102,12 +102,14 @@ const getCurrentUser = (token) => {
 					email: "",
 					first_name: "",
 					last_name: "",
+					user_id: '',
 					is_loggedIn: false,
 				});
 			const currentUser = {
 				email: decoded.email,
 				first_name: decoded.first_name,
 				last_name: decoded.last_name,
+				user_id: decoded.id,
 				is_loggedIn: true,
 			};
 			return resolve(currentUser);

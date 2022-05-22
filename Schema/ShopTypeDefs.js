@@ -36,7 +36,7 @@ const shopTypeDefs = gql`
 
   # Mutations
   type Mutation {
-    createShop(shop: IShop!): Shop
+    createShop(shop: IShop): Shop
     # Need to be worked on
     addServices(services: [String!]!): [String!]!
     # Need to be worked on

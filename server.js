@@ -28,8 +28,8 @@ async function startAppoloServer() {
 	const server = new ApolloServer({
 		typeDefs: [shopTypeDefs],
 		resolvers: _.merge({}, shopResolvers),
-		context: ({req, res}) => {
-			const user = authenticate_graphQL(req);
+		context: async ({req, res}) => {
+			const user = await authenticate_graphQL(req);
 			return {req, res, user};
 		},
 	});
