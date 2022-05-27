@@ -230,11 +230,8 @@ const changePassword = (token, oldPassword, newPassword) => {
 				if (user.length < 1) {
 					return reject({success: false, message: 'Cannot find user'});
 				}
-				const oldEncryptedPassword = await bcrypt.hash(
-					oldPassword,
-					parseInt(process.env.SALT_ROUNDS)
-				);
-				if (oldEncryptedPassword !== user[0].password) {
+				const correctPassword = await bcrypt.compare(oldPassword, user[0].password);
+				if (!correctPassword) {
 					return reject({success: false, message: 'Your current password does not match the password you submitted'});
 				}
 				const encryptedPassword = await bcrypt.hash(
