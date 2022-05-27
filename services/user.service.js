@@ -239,7 +239,7 @@ const changePassword = (token, oldPassword, newPassword) => {
 					parseInt(process.env.SALT_ROUNDS)
 				);
 				var data = {password: encryptedPassword};
-				db.query('UPDATE users SET ? WHERE email ="' + email + '"', data, (err, result) => {
+				db.query('UPDATE users SET ? WHERE email ="' + email + '"', data, (err) => {
 					if (err) {
 						return reject({success: false, message: err});
 					}
