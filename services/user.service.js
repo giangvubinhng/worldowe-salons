@@ -217,7 +217,7 @@ const resetPasswordWithEmail = (email) => {
 	});
 }
 
-const changePassword = (token, newPassword) => {
+const changePassword = (token, oldPassword, newPassword) => {
 	const secret = process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin";
 	return new Promise((resolve, reject) => {
 		jwt.verify(token, secret, (err, decoded) => {
@@ -228,7 +228,14 @@ const changePassword = (token, newPassword) => {
 			db.query(findByEmail, [email], async (err, user) => {
 				if (err) return reject({success: false, message: err});
 				if (user.length < 1) {
-					return reject({success: false, message: 'Incorrect username or password'});
+					return reject({success: false, message: 'Cannot find user'});
+				}
+				const oldEncryptedPassword = await bcrypt.hash(
+					oldPassword,
+					parseInt(process.env.SALT_ROUNDS)
+				);
+				if (oldEncryptedPassword !== user[0].password) {
+					return reject({success: false, message: 'Your current password does not match the password you submitted'});
 				}
 				const encryptedPassword = await bcrypt.hash(
 					newPassword,

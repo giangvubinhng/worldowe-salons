@@ -112,7 +112,7 @@ const resetPasswordWithEmail = async (req, res) => {
 const changePassword = async (req, res) => {
 	try {
 		if (req && req.cookies) {
-			const result = await userService.changePassword(req.cookies.access_token, req.body.newPassword);
+			const result = await userService.changePassword(req.cookies.access_token, req.body.oldPassword, req.body.newPassword);
 			if (result && result.success) {
 				res.status(200).json(result);
 			}
