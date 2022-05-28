@@ -2,9 +2,10 @@ const shop = require("../services/shop.service");
 const {ForbiddenError} = require("apollo-server-express");
 const shopResolvers = {
 	Query: {
-		async shops() {
+		async shops(_, args, context) {
 			try {
-				const result = await shop.getAllShops();
+				console.log(args.name)
+				const result = await shop.getAllShops(args.name);
 				if (result && result.success) {
 					return result.shops
 				}

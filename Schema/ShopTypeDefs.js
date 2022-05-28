@@ -27,7 +27,7 @@ const shopTypeDefs = gql`
 
   # Queries
   type Query {
-    shops: [Shop]
+    shops(name: String): [Shop]
     #Need to be worked on
     shop(id: Int): Shop
     # Need to be worked on

@@ -3,11 +3,20 @@ const db = require("../Models/database");
 /**
  * Get All salon
  */
-const getAllShops = () => {
-	const getAllQuery = "SELECT * FROM location";
+const getAllShops = (name) => {
+	let getAllQuery = ''
+	if (name === '' || name === undefined) {
+		getAllQuery = "SELECT * FROM location";
+
+	}
+	else {
+		getAllQuery = 'SELECT * FROM location WHERE shop_name LIKE ' + db.escape(`%${name}%`)
+	}
 	return new Promise((resolve, reject) => {
 		db.query(getAllQuery, (err, shops) => {
-			if (err) return reject({success: false, message: err});
+			if (err) {
+				return reject({success: false, message: err});
+			}
 			return resolve({success: true, message: "Retrieved all shops successfully", shops: shops});
 		});
 	});
