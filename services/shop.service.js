@@ -12,19 +12,72 @@ const getAllShops = () => {
 		});
 	});
 };
+/**
+ * 
+ * get this booking
+ */
+const getBooking = () => {
+	const getAllQuery = "SELECT * FROM bookings";
+	return new Promise((resolve, reject) => {
+		db.query(getAllQuery, (err, bookings) => {
+			if (err) return reject({success: false, message: err});
+			return resolve({success: true, message: "Retrieved all bookings successfully", booking: bookings});
+		});
+	});
+}
 
 /*
  * Get this salon
  */
 const getShop = (id) => {
-	const getShopQuery = "SELECT * FROM location WHERE id=?";
+	const getShopQuery = "SELECT * FROM location WHERE user_id=?";
 	return new Promise((resolve, reject) => {
-		db.query(getShopQuery, [id], (err, result) => {
+		db.query(getShopQuery, [user_id], (err, result) => {
 			if (err) return reject({success: false, message: err});
-			return resolve({success: true, message: "Retrieve one shop successfully", shop: result[0]});
+			return resolve({success: true, message: "Retrieve shops successfully", shops: result});
 		});
 	});
 };
+/**
+ * 
+ * Create a booking salon
+ */
+const createBooking = (booking, shop_id) =>{   
+	return new Promise((resolve, reject) =>{
+		const first_name = booking.first_name;
+		const last_name = booking.last_name;
+		const shop_name = booking.shop_name; 
+		const date = booking.date;
+		const technician_name = booking.technician_name;
+		const technician_id = booking.technician_id;
+		let services = "";
+
+		for(let i =0; i < booking.services.length; i++){
+			services += booking.services[i];
+		}
+		db.query(
+			"INSERT IGNORE INTO bookings (first_name, last_name, shop_id, shop_name, date, services, technician_name, technician_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+			[
+				first_name,
+				last_name,
+				shop_id,
+				shop_name,
+				date,
+				services,
+				technician_name,
+				technician_id,
+
+			],
+			(err, rows) => {
+				if (err) {
+					return reject({success: false, message: err});
+				} else {
+					return resolve({success: true, message: "booking created successfully", booking: booking});
+				}
+			}
+		);
+	});
+}
 
 /**
  * Create a new salon
@@ -143,12 +196,13 @@ async function isShopOwner(user_id, shop_id) {
 	});
 }
 
-
 module.exports = {
 	addServices,
 	getAllShops,
 	getShop,
 	addTechnicians,
 	createNewShop,
-	getMyShops
+	getMyShops,
+	createBooking,
+	getBooking,
 }

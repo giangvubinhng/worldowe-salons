@@ -49,6 +49,7 @@ INSERT INTO `location` (`user_id`, `id`, `shop_name`, `street`, `city`, `state`,
 (15, 3, 'Giang Nail', '123 N FIled', 'Hampton', '', '', '23777', '123446'),
 (NULL, 4, 'New Shop To Test', 'New Street', 'New City', '', '', '123345', '123456789');
 
+
 -- --------------------------------------------------------
 
 --
