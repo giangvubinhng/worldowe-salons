@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.1.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Jun 06, 2022 at 04:59 AM
--- Server version: 8.0.29
--- PHP Version: 8.0.19
+-- Generation Time: Apr 13, 2022 at 04:34 PM
+-- Server version: 8.0.28
+-- PHP Version: 8.0.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -47,23 +47,7 @@ INSERT INTO `location` (`user_id`, `id`, `shop_name`, `street`, `city`, `state`,
 (15, 1, '', 'New street', 'Blacksburg', 'va', 'va', '24060', ''),
 (16, 2, '', 'New street', 'Lexington', 'Kentucky', 'Kentucky', '24060', ''),
 (15, 3, 'Giang Nail', '123 N FIled', 'Hampton', '', '', '23777', '123446'),
-(NULL, 4, 'New Shop To Test', 'New Street', 'New City', '', '', '123345', '123456789'),
-(15, 5, 'NEW GIANG NAIL', '12323', 'ASKLDJALSDJ', '', '', 'ASDASD', '10091923213'),
-(15, 6, 'GIANG NEW SHOP', 'asdasd', 'sadasd', '', '', 'asdasd', '9898989898'),
-(15, 7, 'GIANG NEW SHOP', 'asdasd', 'asdad', '', '', 'asdasd', 'asdasdsad'),
-(15, 8, 'Test SHOP', 'asda', 'asdad', '', '', 'asda', 'asdasd'),
-(15, 9, 'asdad', 'asdasd', 'asdasd', '', '', 'asdasd', 'asdasd'),
-(15, 10, 'aaa', 'aadd', 'ddd', '', '', 'asdad', 'dasdads'),
-(15, 11, 'ssss', 'ssss', 'sss', '', '', 'sss', 'sss'),
-(15, 12, 'llll', 'lll', 'llll', '', '', '2333', '2222'),
-(15, 13, 'Should Work', 'working', 'street', '', '', '23666', '1234567'),
-(15, 14, 'My new shop', 'Giang', 'Hampton', '', '', 'HUHU', '123123123'),
-(22, 15, 'Khanh Shop', '1234 Street', 'Blacksburg', '', '', '12345', '1233561553412'),
-(15, 16, 'Bao nails', '1234 ', 'Hampton', '', '', '23666', '727272727272'),
-(15, 17, 'New shop to test', '1234', '1234', '', '', '123', '123'),
-(15, 18, 'Good Times Nails', '123 Street', 'Nice City', '', '', '23666', '123456666'),
-(15, 19, 'Shop with Location', '1234 Street Name', 'Hampton', 'Virginia', 'US', '23666', '12345656564'),
-(15, 20, 'Shayla\'s New Shop', '35 terroi', 'Chantily', 'Virginia', 'US', '213545', '13123565788');
+(NULL, 4, 'New Shop To Test', 'New Street', 'New City', '', '', '123345', '123456789');
 
 -- --------------------------------------------------------
 
@@ -101,7 +85,6 @@ CREATE TABLE `users` (
   `first_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `last_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `role` int DEFAULT NULL,
-  `profile_image` varchar(100) NOT NULL,
   `activated` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -109,10 +92,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `role`, `profile_image`, `activated`) VALUES
-(15, 'kaitokid141264@gmail.com', '$2b$10$Kys0JlgBCRXV22/./dSTR.s1jN0zkseh7TDVgNFG3OsO1UJ1Du7PK', 'GT NAIL', '08091231', 0, '/uploads/profiles/smallsize.png', 1),
-(16, 'trungteo0707@gmail.com', '$2b$10$Jn2w.RmXuCnqJYwcFyZwnOLNMx/dYheIeQqgiBSSI3yQbGMHMO642', 'TRUNG NAIL', '08091231', 0, '', 1),
-(22, 'giangnguyentit@gmail.com', '$2b$10$4Q.Xp99339MFXYYjTol5LO2l0BLKljUNMdglN7.BRkVGiJDGRFpKS', 'Khanh', 'Nguyen', 1, '', 1);
+INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `role`, `activated`) VALUES
+(15, 'kaitokid141264@gmail.com', '$2b$10$aH93YzGN5xYwz/E74pLQc.Keakfok7R.c.uNqk2zt1QbY4X6Lpz5S', 'GT NAIL', '08091231', 0, 1),
+(16, 'trungteo0707@gmail.com', '$2b$10$Jn2w.RmXuCnqJYwcFyZwnOLNMx/dYheIeQqgiBSSI3yQbGMHMO642', 'TRUNG NAIL', '08091231', 0, 1),
+(18, 'giangnguyentit@gmail.com', '$2b$10$kmmU0fp0GeLctd93zmKVhObUJkIzzNReJns0f6CKqhitqpWLV4yD2', 'Hi', 'There', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -170,7 +153,7 @@ ALTER TABLE `verification_token`
 -- AUTO_INCREMENT for table `location`
 --
 ALTER TABLE `location`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `technicians`
@@ -182,7 +165,7 @@ ALTER TABLE `technicians`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Constraints for dumped tables
