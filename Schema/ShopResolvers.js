@@ -4,7 +4,6 @@ const shopResolvers = {
 	Query: {
 		async shops(_, args, context) {
 			try {
-				console.log(args.name)
 				const result = await shop.getAllShops(args.name);
 				if (result && result.success) {
 					return result.shops
