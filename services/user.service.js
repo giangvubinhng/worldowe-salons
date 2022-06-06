@@ -96,7 +96,6 @@ const getCurrentUser = (token) => {
 	const secret = process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin";
 	return new Promise((resolve, reject) => {
 		jwt.verify(token, secret, (err, decoded) => {
-			console.log(decoded)
 			if (err || !decoded) {
 				return resolve({
 					email: "",
