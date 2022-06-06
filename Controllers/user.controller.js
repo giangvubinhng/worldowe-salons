@@ -111,12 +111,13 @@ const resetPasswordWithEmail = async (req, res) => {
 
 const changePassword = async (req, res) => {
 	try {
-		if (req.cookies?.access_token) {
-			const result = await userService.changePassword(req.cookies.access_token, req.body.oldPassword, req.body.newPassword);
+		if (req.user) {
+			const result = await userService.changePassword(req.user, req.body.oldPassword, req.body.newPassword);
 			if (result && result.success) {
 				res.status(200).json(result);
 			}
 		}
+		res.status(400).send({success: false, message: "No user found"})
 	}
 	catch (e) {
 		res.status(400).send(e);

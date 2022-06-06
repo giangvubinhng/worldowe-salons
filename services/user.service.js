@@ -96,22 +96,38 @@ const getCurrentUser = (token) => {
 	const secret = process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin";
 	return new Promise((resolve, reject) => {
 		jwt.verify(token, secret, (err, decoded) => {
-			if (err || !decoded)
+			console.log(decoded)
+			if (err || !decoded) {
 				return resolve({
 					email: "",
 					first_name: "",
 					last_name: "",
 					user_id: '',
+					profile_image: '/uploads/profiles/smallsize.png',
 					is_loggedIn: false,
 				});
-			const currentUser = {
-				email: decoded.email,
-				first_name: decoded.first_name,
-				last_name: decoded.last_name,
-				user_id: decoded.id,
-				is_loggedIn: true,
-			};
-			return resolve(currentUser);
+			}
+			db.query("SELECT * FROM users WHERE email = ?", [decoded.email], (err, users) => {
+				if (err || !users) {
+					return resolve({
+						email: "",
+						first_name: "",
+						last_name: "",
+						user_id: '',
+						profile_image: '/uploads/profiles/smallsize.png',
+						is_loggedIn: false,
+					});
+				}
+				const currentUser = {
+					email: users[0].email,
+					first_name: users[0].first_name,
+					last_name: users[0].last_name,
+					user_id: users[0].id,
+					profile_image: users[0].profile_image || '/uploads/profiles/smallsize.png',
+					is_loggedIn: true,
+				};
+				return resolve(currentUser);
+			})
 		});
 	})
 }
@@ -216,38 +232,32 @@ const resetPasswordWithEmail = (email) => {
 	});
 }
 
-const changePassword = (token, oldPassword, newPassword) => {
-	const secret = process.env.LOGIN_SECRET_TOKEN || "someSecretToLogin";
+const changePassword = (currUser, oldPassword, newPassword) => {
 	return new Promise((resolve, reject) => {
-		jwt.verify(token, secret, (err, decoded) => {
-			if (err || !decoded) {
-				return reject({success: false, message: "have not login yet"});
+		const email = currUser.email;
+		db.query(findByEmail, [email], async (err, user) => {
+			if (err) return reject({success: false, message: err});
+			if (user.length < 1) {
+				return reject({success: false, message: 'Cannot find user'});
 			}
-			const email = decoded.email;
-			db.query(findByEmail, [email], async (err, user) => {
-				if (err) return reject({success: false, message: err});
-				if (user.length < 1) {
-					return reject({success: false, message: 'Cannot find user'});
+			const correctPassword = await bcrypt.compare(oldPassword, user[0].password);
+			if (!correctPassword) {
+				return reject({success: false, message: 'Your current password does not match the password you submitted'});
+			}
+			const encryptedPassword = await bcrypt.hash(
+				newPassword,
+				parseInt(process.env.SALT_ROUNDS)
+			);
+			var data = {password: encryptedPassword};
+			db.query('UPDATE users SET ? WHERE email ="' + email + '"', data, (err) => {
+				if (err) {
+					return reject({success: false, message: err});
 				}
-				const correctPassword = await bcrypt.compare(oldPassword, user[0].password);
-				if (!correctPassword) {
-					return reject({success: false, message: 'Your current password does not match the password you submitted'});
+				else {
+					return resolve({success: true, message: "Change Password successfully"});
 				}
-				const encryptedPassword = await bcrypt.hash(
-					newPassword,
-					parseInt(process.env.SALT_ROUNDS)
-				);
-				var data = {password: encryptedPassword};
-				db.query('UPDATE users SET ? WHERE email ="' + email + '"', data, (err) => {
-					if (err) {
-						return reject({success: false, message: err});
-					}
-					else {
-						return resolve({success: true, message: "Change Password successfully"});
-					}
-				})
 			})
-		});
+		})
 	});
 }
 

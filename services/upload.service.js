@@ -31,24 +31,6 @@ const uploadProfilePicture = (file, user) => {
 	})
 }
 
-/*
-	* Function to retrieve profile picture
-	*/
-const retrieveProfilePicture = (id) => {
-	const findById = "SELECT * from users WHERE id = ?"
-	return new Promise((resolve, reject) => {
-		db.query(findById, [id], (err, users) => {
-			if (err || (!users || users.length === 0)) {
-				return reject({success: false, message: "Failed to retrieve profile picture"})
-			}
-			const profile_image = users[0].profile_image
-			return resolve({success: true, message: "Profile picture retrieved", profile_image})
-		})
-	})
-
-}
-
 module.exports = {
 	uploadProfilePicture,
-	retrieveProfilePicture
 }
