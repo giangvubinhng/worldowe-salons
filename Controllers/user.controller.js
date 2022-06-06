@@ -57,7 +57,7 @@ const userLogin = async (req, res, next) => {
 	}
 }
 const getCurrentUser = async (req, res) => {
-	if (!req || !req.cookies) {
+	if (!req.cookies) {
 		return res.json({
 			email: "",
 			first_name: "",
@@ -70,6 +70,11 @@ const getCurrentUser = async (req, res) => {
 		const currentUser = await userService.getCurrentUser(token);
 		return res.json(currentUser)
 	}
+}
+const getCurrentUserUsingReqBody = async (req, res) => {
+	const token = req.body.access_token;
+	const currentUser = await userService.getCurrentUser(token);
+	return res.json(currentUser)
 }
 
 const userLogout = (req, res) => {
@@ -131,6 +136,7 @@ module.exports = {
 	userLogin,
 	verifyUser,
 	getCurrentUser,
+	getCurrentUserUsingReqBody,
 	userLogout,
 	userReset,
 	resetPasswordWithEmail,

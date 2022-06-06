@@ -22,6 +22,10 @@ router.post("/login", userController.userLogin);
  * getCurrentUser
  */
 router.get("/current-user", userController.getCurrentUser);
+/**
+ * getCurrentUserUsingReqBody
+ */
+router.post("/current-user", userController.getCurrentUserUsingReqBody);
 
 /**
  * User logout
