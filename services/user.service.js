@@ -3,7 +3,6 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const db = require("../Models/database");
 const emailingService = require("./emailing.service.js");
-const {promises} = require("nodemailer/lib/xoauth2");
 require("dotenv").config();
 require("../config/passport")(passport);
 

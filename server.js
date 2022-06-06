@@ -1,4 +1,5 @@
 const express = require("express");
+const fileUpload = require('express-fileupload')
 const _ = require("lodash");
 const {ApolloServer} = require("apollo-server-express");
 const app = express();
@@ -6,17 +7,20 @@ const {shopTypeDefs} = require("./Schema/ShopTypeDefs");
 const {shopResolvers} = require("./Schema/ShopResolvers");
 const passport = require("passport");
 const user = require("./Routes/user.js");
+const upload = require("./Routes/upload.js");
 const shops = require("./Routes/shop.js");
 const cors = require("cors");
 const cookies = require("cookie-parser");
-const {authUser, authenticate_graphQL} = require("./config/auth");
+const {authenticate_graphQL} = require("./config/auth");
 const port = process.env.PORT || 5000;
 require("./config/passport")(passport);
 require("dotenv").config();
 
 async function startAppoloServer() {
-	app.use(express.urlencoded({extended: true})); // New
-	app.use(express.json()); // New
+	app.use(express.urlencoded({extended: true}));
+	app.use(express.json());
+	app.use(fileUpload());
+	app.use('/uploads', express.static(__dirname + '/uploads'));
 	app.use(passport.initialize());
 	app.use(cookies());
 	app.use(
@@ -38,6 +42,7 @@ async function startAppoloServer() {
 	app.get("/", (req, res) => {
 		res.send("Sorry, Worldowe is currently under development!");
 	});
+	app.use("/upload", upload)
 	app.use("/api/user", user);
 	app.use("/api/shops", shops);
 	app.listen(port, () => {

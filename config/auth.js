@@ -26,7 +26,8 @@ const authUser = async (req, res, next) => {
 	if (req && req.cookies && req.cookies.access_token) {
 		const token = req.cookies.access_token;
 		try {
-			await verifyToken(token, secret)
+			const user = await verifyToken(token, secret)
+			req.user = user;
 			next();
 		} catch (e) {
 			res.status(403).json("Not Authorized")
