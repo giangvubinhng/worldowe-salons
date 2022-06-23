@@ -23,7 +23,7 @@ const sendConfirmationEmail = (
 			html: `
           <h2>Hello ${first_name}</h2>
           <p>Thank you for joining Worldowe. Please confirm your email by clicking on the following link</p>
-          <a href=http://localhost:3000/users/verify/${confirmationCode}> Click here</a>
+          <a href=${process.env.CLIENT_URI}/users/verify/${confirmationCode}> Click here</a>
           </div>`,
 		})
 		.catch((err) =>
@@ -41,7 +41,7 @@ const sendResetPasswordEmail = (token, email) => {
 		subject: "reset password",
 		html: `
     <p>Hello</p>
-    <a href=http://localhost:3000/reset-password/${token}> Click here</a>
+    <a href=${process.env.CLIENT_URI}/reset-password/${token}> Click here</a>
     `,
 	})
 		.catch((err) => err);
