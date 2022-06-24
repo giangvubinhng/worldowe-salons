@@ -5,10 +5,10 @@ const {ApolloServer} = require("apollo-server-express");
 const app = express();
 const {shopTypeDefs} = require("./Schema/ShopTypeDefs");
 const {shopResolvers} = require("./Schema/ShopResolvers");
+const {typeResolvers} = require("./Schema/ScalarTypeResolvers")
 const passport = require("passport");
 const user = require("./Routes/user.js");
 const upload = require("./Routes/upload.js");
-const shops = require("./Routes/shop.js");
 const cors = require("cors");
 const cookies = require("cookie-parser");
 const {authenticate_graphQL} = require("./config/auth");
@@ -31,7 +31,7 @@ async function startAppoloServer() {
 	);
 	const server = new ApolloServer({
 		typeDefs: [shopTypeDefs],
-		resolvers: _.merge({}, shopResolvers),
+		resolvers: _.merge({}, shopResolvers, typeResolvers),
 		context: async ({req, res}) => {
 			const user = await authenticate_graphQL(req);
 			return {req, res, user};
@@ -44,7 +44,6 @@ async function startAppoloServer() {
 	});
 	app.use("/upload", upload)
 	app.use("/api/user", user);
-	app.use("/api/shops", shops);
 	app.listen(port, () => {
 		console.log(`Worldowe app listening at ${port}`);
 	});

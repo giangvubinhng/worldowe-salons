@@ -1,6 +1,8 @@
 const {gql} = require("apollo-server-express");
 
 const shopTypeDefs = gql`
+	#Scalars
+	scalar Date
   # Types
   type Shop {
     user_id: Int
@@ -13,6 +15,17 @@ const shopTypeDefs = gql`
     zip: String!
     phone: String!
   }
+	type Booking {
+		id: Int
+		shop_id: Int
+		technician_id: Int
+		customer_name: String
+		created: Date
+		
+
+
+
+	}
 
   # Input
   input IShop {
