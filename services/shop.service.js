@@ -136,6 +136,7 @@ const getMyShops = (user_id) => {
 		});
 	});
 }
+
 /*
 	* Helper functions
 	* @return {success, shop}

@@ -15,17 +15,6 @@ const shopTypeDefs = gql`
     zip: String!
     phone: String!
   }
-	type Booking {
-		id: Int
-		shop_id: Int
-		technician_id: Int
-		customer_name: String
-		created: Date
-		
-
-
-
-	}
 
   # Input
   input IShop {

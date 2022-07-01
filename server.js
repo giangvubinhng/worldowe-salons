@@ -5,6 +5,8 @@ const {ApolloServer} = require("apollo-server-express");
 const app = express();
 const {shopTypeDefs} = require("./Schema/ShopTypeDefs");
 const {shopResolvers} = require("./Schema/ShopResolvers");
+const {bookingTypeDefs} = require("./Schema/BookingTypeDefs");
+const {bookingResolvers} = require("./Schema/BookingResolvers");
 const {typeResolvers} = require("./Schema/ScalarTypeResolvers")
 const passport = require("passport");
 const user = require("./Routes/user.js");
@@ -30,8 +32,8 @@ async function startAppoloServer() {
 		})
 	);
 	const server = new ApolloServer({
-		typeDefs: [shopTypeDefs],
-		resolvers: _.merge({}, shopResolvers, typeResolvers),
+		typeDefs: [shopTypeDefs, bookingTypeDefs],
+		resolvers: _.merge({}, shopResolvers, typeResolvers, bookingResolvers),
 		context: async ({req, res}) => {
 			const user = await authenticate_graphQL(req);
 			return {req, res, user};
