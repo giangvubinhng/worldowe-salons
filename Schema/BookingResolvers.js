@@ -1,12 +1,12 @@
-const bookingService = require("../services/shop.service");
+const bookingService = require("../services/booking.service");
 const {ForbiddenError} = require("apollo-server-express");
 const bookingResolvers = {
 	Query: {
 		async bookings(_, args, context) {
 			try {
-				const result = await shop.getAllShops(args.name);
+				const result = await bookingService.getBookingsByShopId(args.shop_id);
 				if (result && result.success) {
-					return result.shops
+					return result.result
 				}
 
 			} catch (e) {
@@ -16,9 +16,9 @@ const bookingResolvers = {
 
 		async booking(_, args) {
 			try {
-				const result = await shop.getShop(args.id);
+				const result = await bookingService.getBooking(args.id);
 				if (result && result.success) {
-					return result.shop
+					return result.result
 				}
 
 			} catch (e) {
@@ -28,11 +28,21 @@ const bookingResolvers = {
 	},
 	Mutation: {
 		async createBooking(_, args, context) {
+			try {
+				const result = await bookingService.createBooking(args.createBookingRequestBody);
+				if (result && result.success) {
+					return result
+				}
+			} catch (e) {
+				return e;
+			}
+		},
+		async deleteBooking(_, args, context) {
 			if (!context.user) {
 				throw new ForbiddenError("Unauthorized");
 			}
 			try {
-				const result = await shop.createNewShop(context.user.id, args.shop);
+				const result = await bookingService.deleteBooking(args.booking_id);
 				if (result && result.success) {
 					return result
 				}
