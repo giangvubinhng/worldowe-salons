@@ -136,8 +136,10 @@ const getMyShops = (user_id) => {
 		});
 	});
 }
+
 /*
 	* Helper functions
+	* @return {success, shop}
 	*/
 async function isShopOwner(user_id, shop_id) {
 	const getShopQuery = "SELECT * FROM location WHERE user_id=? AND id=?";
