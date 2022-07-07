@@ -35,7 +35,7 @@ const bookingTypeDefs = gql`
   # Mutations
   type Mutation {
     createBooking(shop: IBooking!): Booking
-		cancelBooking(id: Int!): Booking
+		deleteBooking(id: Int!): Booking
   }
 `;
 
