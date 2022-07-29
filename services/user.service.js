@@ -11,6 +11,9 @@ const findByEmail = 'SELECT * FROM users WHERE email = ?';
 // Functions start here
 const userRegister = (body) => {
 	return new Promise(async (resolve, reject) => {
+		if (body.email == "" || body.password !== "") {
+			return reject({success: false, message: "Email and Password cannot be empty"});
+		}
 		// Hash password
 		const encryptedPassword = await bcrypt.hash(
 			body.password,
@@ -30,38 +33,36 @@ const userRegister = (body) => {
 				} else if (user.length > 0) {
 					return reject({success: false, message: "This email already exists"});
 				} else if (user.length === 0) {
-					if (email !== "" && body.password !== "") {
-						db.query(
-							"INSERT INTO users (email, first_name, last_name, password, role, activated) VALUES (?, ?, ?, ?, ?, ?)",
-							[email, first_name, last_name, encryptedPassword, 1, false],
-							(err, result) => {
-								if (err) {
-									return reject({success: false, message: err})
-								} else {
-									const user_id = result.insertId;
-									const token = jwt.sign(
-										{email: body.email, id: user_id},
-										process.env.VERIFICATION_TOKEN
-									);
-									db.query(
-										"INSERT INTO verification_token (user_id, token) VALUES (?, ?)",
-										[user_id, token],
-										(err) => {
-											if (err) {
-												return reject({success: false, message: err})
-											}
+					db.query(
+						"INSERT INTO users (email, first_name, last_name, password, role, activated) VALUES (?, ?, ?, ?, ?, ?)",
+						[email, first_name, last_name, encryptedPassword, 1, false],
+						(err, result) => {
+							if (err) {
+								return reject({success: false, message: err})
+							} else {
+								const user_id = result.insertId;
+								const token = jwt.sign(
+									{email: body.email, id: user_id},
+									process.env.VERIFICATION_TOKEN
+								);
+								db.query(
+									"INSERT INTO verification_token (user_id, token) VALUES (?, ?)",
+									[user_id, token],
+									(err) => {
+										if (err) {
+											return reject({success: false, message: err})
 										}
-									);
-									emailingService.sendConfirmationEmail(
-										first_name,
-										email,
-										token
-									);
-									return resolve({success: true, message: "Registered successfully. Please check your email"})
-								}
+									}
+								);
+								emailingService.sendConfirmationEmail(
+									first_name,
+									email,
+									token
+								);
+								return resolve({success: true, message: "Registered successfully. Please check your email"})
 							}
-						);
-					}
+						}
+					);
 				}
 			})
 
